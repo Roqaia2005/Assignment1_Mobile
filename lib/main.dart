@@ -4,10 +4,12 @@ import 'package:hive_flutter/adapters.dart';
 import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
 
-Future<void> main() async {
+void main() async {
   WidgetsFlutterBinding.ensureInitialized();
-  Hive.registerAdapter(StudentAdapter());
   await Hive.initFlutter();
+
+  Hive.registerAdapter(StudentAdapter());
+
   await Hive.openBox<Student>('students');
 
   runApp(const MyApp());

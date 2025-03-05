@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
+import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/Models/student.dart';
 import 'package:student_registeration/screens/home_screen.dart';
 import 'package:student_registeration/screens/signup_screen.dart';
@@ -83,48 +84,26 @@ class _LoginScreenState extends State<LoginScreen> {
             ElevatedButton(
               child: Text("Login"),
               onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  var box = Hive.box<Student>('students');
-
-                  print(
-                    "Box opened successfully, student count: ${box.values.length}",
-                  );
-
-                  String email = emailController.text.trim();
-                  String password = passwordController.text;
-
-                  bool isEmailExists = box.values.any((s) {
-                    print("Checking student: ${s.email}, ${s.password}");
-                    return s.email == email && s.password == password;
-                  });
-
-                  if (isEmailExists) {
-                    print("Login successful!");
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Successfully logged in")),
-                    );
-
-                    Navigator.pushReplacement(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ),
-                    );
-                  } else {
-                    print("Login failed: Invalid email or password");
-
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Invalid email or password")),
-                    );
-                  }
-                } else {
-                  print("Form validation failed");
-
+                bool isStudentExists = box.values.any(
+                  (s) =>
+                      s.email == emailController.text &&
+                      s.password == passwordController.text,
+                );
+                if (isStudentExists) {
                   ScaffoldMessenger.of(context).showSnackBar(
-                    SnackBar(
-                      content: Text("Please, enter all required fields"),
+                    SnackBar(content: Text("Sign in Successful!")),
+                  );
+                  Navigator.push(
+                    context,
+                    MaterialPageRoute(
+                      builder: (context) {
+                        return HomeScreen();
+                      },
                     ),
+                  );
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(content: Text("Invalid credintials")),
                   );
                 }
               },

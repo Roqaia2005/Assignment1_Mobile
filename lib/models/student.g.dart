@@ -17,12 +17,12 @@ class StudentAdapter extends TypeAdapter<Student> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Student(
-      name: fields[1] as String?,
-      id: fields[2] as String?,
-      email: fields[3] as String?,
-      password: fields[4] as String?,
-      gender: fields[5] as String?,
-      level: fields[6] as String?,
+      name: fields[0] as String?,
+      id: fields[1] as String?,
+      email: fields[2] as String?,
+      password: fields[3] as String?,
+      gender: fields[4] as String?,
+      level: fields[5] as String?,
     );
   }
 
@@ -30,17 +30,17 @@ class StudentAdapter extends TypeAdapter<Student> {
   void write(BinaryWriter writer, Student obj) {
     writer
       ..writeByte(6)
-      ..writeByte(1)
+      ..writeByte(0)
       ..write(obj.name)
-      ..writeByte(2)
+      ..writeByte(1)
       ..write(obj.id)
-      ..writeByte(3)
+      ..writeByte(2)
       ..write(obj.email)
-      ..writeByte(4)
+      ..writeByte(3)
       ..write(obj.password)
-      ..writeByte(5)
+      ..writeByte(4)
       ..write(obj.gender)
-      ..writeByte(6)
+      ..writeByte(5)
       ..write(obj.level);
   }
 

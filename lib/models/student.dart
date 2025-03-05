@@ -2,18 +2,18 @@ import 'package:hive/hive.dart';
 part 'student.g.dart';
 
 @HiveType(typeId: 1)
-class Student {
-  @HiveField(1)
+class Student extends HiveObject {
+  @HiveField(0)
   String? name;
-  @HiveField(2)
+  @HiveField(1)
   String? id;
-  @HiveField(3)
+  @HiveField(2)
   String? email;
-  @HiveField(4)
+  @HiveField(3)
   String? password;
-  @HiveField(5)
+  @HiveField(4)
   String? gender;
-  @HiveField(6)
+  @HiveField(5)
   String? level;
 
   Student({

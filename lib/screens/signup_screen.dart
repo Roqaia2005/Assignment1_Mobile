@@ -1,7 +1,9 @@
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
+import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
+
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -223,8 +225,6 @@ class _SignupScreenState extends State<SignupScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    var box = Hive.box<Student>('students');
-
                     Student student = Student(
                       email: emailController.text,
                       password: passwordController.text,
