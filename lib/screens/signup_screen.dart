@@ -1,9 +1,7 @@
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
-import 'package:student_registeration/Models/student.dart';
+import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
-
-Map<String, dynamic> users = {};
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -21,20 +19,8 @@ class _SignupScreenState extends State<SignupScreen> {
   final levelController = TextEditingController();
 
   String? gender;
-  bool obscure = true;
   final _formKey = GlobalKey<FormState>();
-  _SignupScreenState() {
-    Student newStudent = Student(
-      id: idController.text,
-      name: nameController.text,
-      email: emailController.text,
-      password: passwordController.text,
-      level: levelController.text,
-      gender: gender!,
-    );
-    var studentBox = Hive.box<Student>('students');
-    studentBox.add(newStudent);
-  }
+  bool obscure = true;
 
   @override
   Widget build(BuildContext context) {
@@ -139,7 +125,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  fillColor: Colors.blue,
+                  fillColor: const Color.fromARGB(255, 141, 157, 170),
                   filled: true,
                   hintText: "Email",
                   hintStyle: const TextStyle(
@@ -213,7 +199,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 },
                 decoration: InputDecoration(
                   suffixIcon: IconButton(
-                    onPressed: () {
+                    onPressed: () async {
                       setState(() {
                         obscure = !obscure;
                       });
@@ -223,7 +209,7 @@ class _SignupScreenState extends State<SignupScreen> {
                     ),
                   ),
                   filled: true,
-                  fillColor: Colors.blue,
+                  fillColor: const Color.fromARGB(255, 88, 95, 101),
                   hintText: "Confirm Password",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -237,18 +223,35 @@ class _SignupScreenState extends State<SignupScreen> {
               ElevatedButton(
                 onPressed: () {
                   if (_formKey.currentState!.validate()) {
-                    setState(() {
-                      users[emailController.text] = passwordController.text;
-                    });
+                    var box = Hive.box<Student>('students');
+
+                    Student student = Student(
+                      email: emailController.text,
+                      password: passwordController.text,
+                      level: levelController.text,
+                      gender: gender,
+                      name: nameController.text,
+                      id: idController.text,
+                    );
+                    box.put(idController.text, student);
+                    setState(() {});
+
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(content: Text("Sign up Successful!")),
                     );
+
                     Navigator.push(
                       context,
                       MaterialPageRoute(
                         builder: (context) {
                           return LoginScreen();
                         },
+                      ),
+                    );
+                  } else {
+                    ScaffoldMessenger.of(context).showSnackBar(
+                      const SnackBar(
+                        content: Text("Failed to sign up , try again"),
                       ),
                     );
                   }

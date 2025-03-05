@@ -1,5 +1,6 @@
 import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
+import 'package:student_registeration/Models/student.dart';
 import 'package:student_registeration/screens/home_screen.dart';
 import 'package:student_registeration/screens/signup_screen.dart';
 
@@ -7,16 +8,19 @@ class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
   @override
-  @override
   State<LoginScreen> createState() => _LoginScreenState();
 }
 
 class _LoginScreenState extends State<LoginScreen> {
   final emailController = TextEditingController();
-
   final passwordController = TextEditingController();
   bool obscure = true;
   final _formKey = GlobalKey<FormState>();
+
+  @override
+  void initState() {
+    super.initState();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -32,13 +36,12 @@ class _LoginScreenState extends State<LoginScreen> {
               controller: emailController,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
-                  return "this field is required";
-                } else {
-                  return null;
+                  return "This field is required";
                 }
+                return null;
               },
               decoration: InputDecoration(
-                fillColor: Colors.blue,
+                fillColor: const Color.fromARGB(255, 170, 186, 199),
                 filled: true,
                 hintText: "Email",
                 hintStyle: const TextStyle(color: Color.fromARGB(153, 0, 0, 0)),
@@ -53,12 +56,10 @@ class _LoginScreenState extends State<LoginScreen> {
               obscureText: obscure,
               validator: (value) {
                 if (value?.isEmpty ?? true) {
-                  return "this field is required";
-                } else {
-                  return null;
+                  return "This field is required";
                 }
+                return null;
               },
-              onSaved: (value) {},
               decoration: InputDecoration(
                 suffixIcon: IconButton(
                   onPressed: () {
@@ -77,56 +78,72 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
+
             const SizedBox(height: 20),
             ElevatedButton(
+              child: Text("Login"),
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
-                  String email = emailController.text;
-                  String password = passwordController.text;
+                  var box = Hive.box<Student>('students');
 
-                  final box = await Hive.openBox('students');
-                  final student = box.values.firstWhere(
-                    (student) =>
-                        student.email == email && student.password == password,
-                    orElse: () => null,
+                  print(
+                    "Box opened successfully, student count: ${box.values.length}",
                   );
 
-                  if (student != null) {
+                  String email = emailController.text.trim();
+                  String password = passwordController.text;
+
+                  bool isEmailExists = box.values.any((s) {
+                    print("Checking student: ${s.email}, ${s.password}");
+                    return s.email == email && s.password == password;
+                  });
+
+                  if (isEmailExists) {
+                    print("Login successful!");
+
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Login Successful!")),
+                      SnackBar(content: Text("Successfully logged in")),
                     );
-                    Navigator.push(
+
+                    Navigator.pushReplacement(
                       context,
                       MaterialPageRoute(
-                        builder: (context) {
-                          return HomeScreen();
-                        },
+                        builder: (context) => const HomeScreen(),
                       ),
                     );
                   } else {
+                    print("Login failed: Invalid email or password");
+
                     ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Invalid Email or Password!"),
-                      ),
+                      SnackBar(content: Text("Invalid email or password")),
                     );
                   }
+                } else {
+                  print("Form validation failed");
+
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    SnackBar(
+                      content: Text("Please, enter all required fields"),
+                    ),
+                  );
                 }
               },
-              child: const Text("Login"),
             ),
             const SizedBox(height: 10),
             Row(
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
-                Text("Don't have an account?"),
+                const Text("Don't have an account?"),
                 TextButton(
                   onPressed: () {
                     Navigator.push(
                       context,
-                      MaterialPageRoute(builder: (context) => SignupScreen()),
+                      MaterialPageRoute(
+                        builder: (context) => const SignupScreen(),
+                      ),
                     );
                   },
-                  child: Text("Sign up"),
+                  child: const Text("Sign up"),
                 ),
               ],
             ),
