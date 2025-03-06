@@ -5,6 +5,9 @@ class HomeScreen extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold();
+    return Scaffold(
+      //Create and edit profile screen with an option of adding profile photo (from gallery or from camera).
+      //<using http plugin>
+    );
   }
 }

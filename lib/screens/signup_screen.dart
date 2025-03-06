@@ -69,8 +69,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  fillColor: Colors.blue,
-                  filled: true,
                   hintText: "ID",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -90,8 +88,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  fillColor: Colors.blue,
-                  filled: true,
                   hintText: "Name",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -148,8 +144,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   return null;
                 },
                 decoration: InputDecoration(
-                  fillColor: const Color.fromARGB(255, 141, 157, 170),
-                  filled: true,
                   hintText: "Email",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -164,8 +158,6 @@ class _SignupScreenState extends State<SignupScreen> {
                 controller: levelController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
-                  fillColor: Colors.blue,
-                  filled: true,
                   hintText: "Level (Optional)",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -200,8 +192,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       obscure ? Icons.visibility_off : Icons.visibility,
                     ),
                   ),
-                  filled: true,
-                  fillColor: Colors.blue,
+
                   hintText: "Password",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -235,8 +226,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       obscureConfirm ? Icons.visibility_off : Icons.visibility,
                     ),
                   ),
-                  filled: true,
-                  fillColor: const Color.fromARGB(255, 88, 95, 101),
+
                   hintText: "Confirm Password",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -253,7 +243,8 @@ class _SignupScreenState extends State<SignupScreen> {
                     bool connected =
                         await InternetConnection().hasInternetAccess;
                     if (!connected) {
-                      print("No internet: Storing user in Hive");
+                      // if not connected sign up with hive local database
+
                       Student student = Student(
                         email: emailController.text,
                         password: passwordController.text,
@@ -330,7 +321,7 @@ class _SignupScreenState extends State<SignupScreen> {
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Failed to sign up, try again"),
+                        content: Text("Please, enter all required fields"),
                       ),
                     );
                   }

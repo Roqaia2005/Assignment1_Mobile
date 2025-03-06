@@ -5,7 +5,6 @@ import 'package:student_registeration/screens/home_screen.dart';
 import 'package:student_registeration/screens/signup_screen.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
-
 class LoginScreen extends StatefulWidget {
   const LoginScreen({super.key});
 
@@ -43,8 +42,6 @@ class _LoginScreenState extends State<LoginScreen> {
                 return null;
               },
               decoration: InputDecoration(
-                fillColor: const Color.fromARGB(255, 170, 186, 199),
-                filled: true,
                 hintText: "Email",
                 hintStyle: const TextStyle(color: Color.fromARGB(153, 0, 0, 0)),
                 border: OutlineInputBorder(
@@ -71,8 +68,7 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
                 ),
-                filled: true,
-                fillColor: Colors.blue,
+
                 hintText: "Password",
                 hintStyle: const TextStyle(color: Color.fromARGB(153, 0, 0, 0)),
                 border: OutlineInputBorder(
@@ -86,56 +82,64 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Text("Login"),
 
               onPressed: () async {
-                bool connected = await InternetConnection().hasInternetAccess;
-                if (!connected) {
-                  bool isStudentExists = box.values.any(
-                    (s) =>
-                        s.email == emailController.text &&
-                        s.password == passwordController.text,
-                  );
-                  if (isStudentExists) {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("Sign in Successful!")),
+                if (_formKey.currentState!.validate()) {
+                  bool connected = await InternetConnection().hasInternetAccess;
+                  if (!connected) {
+                    bool isStudentExists = box.values.any(
+                      (s) =>
+                          s.email == emailController.text &&
+                          s.password == passwordController.text,
                     );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return HomeScreen();
-                        },
-                      ),
-                    );
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Invalid credentials")),
-                    );
-                  }
-                } else {
-                  try {
-                    await FirebaseAuth.instance.signInWithEmailAndPassword(
-                      email: emailController.text,
-                      password: passwordController.text,
-                    );
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      SnackBar(content: Text("login successfully.")),
-                    );
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const HomeScreen(),
-                      ),
-                    );
-                  } on FirebaseAuthException catch (e) {
-                    if (e.code == 'invalid-credential') {
+                    if (isStudentExists) {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Invalid Email or password")),
+                        SnackBar(content: Text("Sign in Successful!")),
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) {
+                            return HomeScreen();
+                          },
+                        ),
                       );
                     } else {
                       ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Error: ${e.message}")),
+                        const SnackBar(content: Text("Invalid credentials")),
                       );
                     }
+                  } else {
+                    try {
+                      await FirebaseAuth.instance.signInWithEmailAndPassword(
+                        email: emailController.text,
+                        password: passwordController.text,
+                      );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        SnackBar(content: Text("login successfully.")),
+                      );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const HomeScreen(),
+                        ),
+                      );
+                    } on FirebaseAuthException catch (e) {
+                      if (e.code == 'invalid-credential') {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Invalid Email or password")),
+                        );
+                      } else {
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          SnackBar(content: Text("Error: ${e.message}")),
+                        );
+                      }
+                    }
                   }
+                } else {
+                  ScaffoldMessenger.of(context).showSnackBar(
+                    const SnackBar(
+                      content: Text("Please, enter all required fields"),
+                    ),
+                  );
                 }
               },
             ),
