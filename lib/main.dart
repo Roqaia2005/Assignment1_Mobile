@@ -1,6 +1,7 @@
-import 'package:hive/hive.dart';
+import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
+import 'package:firebase_core/firebase_core.dart';
 import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
 
@@ -11,6 +12,8 @@ void main() async {
   Hive.registerAdapter(StudentAdapter());
 
   await Hive.openBox<Student>('students');
+
+  await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
 
   runApp(const MyApp());
 }

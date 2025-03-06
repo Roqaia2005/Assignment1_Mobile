@@ -1,9 +1,11 @@
-import 'package:hive/hive.dart';
+import 'dart:async';
 import 'package:flutter/material.dart';
+import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_registeration/helper.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
-
+import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -23,6 +25,26 @@ class _SignupScreenState extends State<SignupScreen> {
   String? gender;
   final _formKey = GlobalKey<FormState>();
   bool obscure = true;
+  bool obscureConfirm = true;
+  late StreamSubscription<InternetStatus> listener;
+  @override
+  void initState() {
+    super.initState();
+
+    listener = InternetConnection().onStatusChange.listen((status) async {
+      if (status == InternetStatus.connected) {
+        if (box.isNotEmpty) {
+          await syncOfflineUsersToFirebase();
+        }
+      }
+    });
+  }
+
+  @override
+  void dispose() {
+    listener.cancel();
+    super.dispose();
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -44,7 +66,6 @@ class _SignupScreenState extends State<SignupScreen> {
                   if (!RegExp(r'^[0-9]+$').hasMatch(value!)) {
                     return "ID must be numeric";
                   }
-
                   return null;
                 },
                 decoration: InputDecoration(
@@ -162,6 +183,10 @@ class _SignupScreenState extends State<SignupScreen> {
                   if (value?.isEmpty ?? true) {
                     return "This field is required";
                   }
+
+                  if (!RegExp(r'^(?=.*[0-9]).{8,}$').hasMatch(value!)) {
+                    return "Password must contain at least one number and 8 characters";
+                  }
                   return null;
                 },
                 decoration: InputDecoration(
@@ -189,7 +214,7 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 20),
               TextFormField(
                 controller: confirmPasswordController,
-                obscureText: obscure,
+                obscureText: obscureConfirm,
                 validator: (value) {
                   if (value?.isEmpty ?? true) {
                     return "This field is required";
@@ -203,11 +228,11 @@ class _SignupScreenState extends State<SignupScreen> {
                   suffixIcon: IconButton(
                     onPressed: () async {
                       setState(() {
-                        obscure = !obscure;
+                        obscureConfirm = !obscureConfirm;
                       });
                     },
                     icon: Icon(
-                      obscure ? Icons.visibility_off : Icons.visibility,
+                      obscureConfirm ? Icons.visibility_off : Icons.visibility,
                     ),
                   ),
                   filled: true,
@@ -223,35 +248,89 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               const SizedBox(height: 20),
               ElevatedButton(
-                onPressed: () {
+                onPressed: () async {
                   if (_formKey.currentState!.validate()) {
-                    Student student = Student(
-                      email: emailController.text,
-                      password: passwordController.text,
-                      level: levelController.text,
-                      gender: gender,
-                      name: nameController.text,
-                      id: idController.text,
-                    );
-                    box.put(idController.text, student);
-                    setState(() {});
+                    bool connected =
+                        await InternetConnection().hasInternetAccess;
+                    if (!connected) {
+                      print("No internet: Storing user in Hive");
+                      Student student = Student(
+                        email: emailController.text,
+                        password: passwordController.text,
+                        level: levelController.text,
+                        gender: gender,
+                        name: nameController.text,
+                        id: idController.text,
+                      );
+                      await box.put(idController.text, student);
 
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(content: Text("Sign up Successful!")),
-                    );
+                      ScaffoldMessenger.of(context).showSnackBar(
+                        const SnackBar(content: Text("Sign up Successful!")),
+                      );
 
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) {
-                          return LoginScreen();
-                        },
-                      ),
-                    );
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                          builder: (context) => const LoginScreen(),
+                        ),
+                      );
+                    } else {
+                      try {
+                        UserCredential userCredential = await FirebaseAuth
+                            .instance
+                            .createUserWithEmailAndPassword(
+                              email: emailController.text,
+                              password: passwordController.text,
+                            );
+                        await FirebaseFirestore.instance
+                            .collection("students")
+                            .doc(idController.text)
+                            .set({
+                              'id': idController.text,
+                              'name': nameController.text,
+                              'email': emailController.text,
+                              'gender': gender,
+                              'level': levelController.text,
+                            });
+
+                        ScaffoldMessenger.of(context).showSnackBar(
+                          const SnackBar(
+                            content: Text("Successfully registered"),
+                          ),
+                        );
+
+                        Navigator.push(
+                          context,
+                          MaterialPageRoute(
+                            builder: (context) => const LoginScreen(),
+                          ),
+                        );
+                      } on FirebaseAuthException catch (e) {
+                        if (e.code == 'weak-password') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Password is too weak"),
+                            ),
+                          );
+                        } else if (e.code == 'email-already-in-use') {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("This email already exists"),
+                            ),
+                          );
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("The email is not valid"),
+                            ),
+                          );
+                        }
+                      }
+                    }
                   } else {
                     ScaffoldMessenger.of(context).showSnackBar(
                       const SnackBar(
-                        content: Text("Failed to sign up , try again"),
+                        content: Text("Failed to sign up, try again"),
                       ),
                     );
                   }
@@ -268,9 +347,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       Navigator.push(
                         context,
                         MaterialPageRoute(
-                          builder: (context) {
-                            return LoginScreen();
-                          },
+                          builder: (context) => const LoginScreen(),
                         ),
                       );
                     },
@@ -283,5 +360,33 @@ class _SignupScreenState extends State<SignupScreen> {
         ),
       ),
     );
+  }
+}
+
+// this function used when user sign up offline , so when internet connection restored data stored in firebase
+Future<void> syncOfflineUsersToFirebase() async {
+  for (var student in box.values) {
+    try {
+      UserCredential userCredential = await FirebaseAuth.instance
+          .createUserWithEmailAndPassword(
+            email: student.email!,
+            password: student.password!,
+          );
+
+      await FirebaseFirestore.instance
+          .collection("students")
+          .doc(student.id)
+          .set({
+            'id': student.id,
+            'name': student.name,
+            'email': student.email,
+            'gender': student.gender,
+            'level': student.level,
+          });
+
+      print("Synced ${student.email} to Firebase");
+    } catch (e) {
+      print("Failed to sync ${student.email}: $e");
+    }
   }
 }
