@@ -155,6 +155,16 @@ class _SignupScreenState extends State<SignupScreen> {
               ),
               const SizedBox(height: 20),
               TextFormField(
+                validator: (value) {
+                  if (value?.isEmpty ?? true) {
+                    return "This field is required";
+                  }
+                  if (!RegExp(r'^[1-4]').hasMatch(value!)) {
+                    return "Select your level from 1 to 4";
+                  }
+
+                  return null;
+                },
                 controller: levelController,
                 keyboardType: TextInputType.number,
                 decoration: InputDecoration(
