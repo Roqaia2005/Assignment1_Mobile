@@ -14,18 +14,18 @@ class HomeScreen extends StatefulWidget {
 class _HomeScreenState extends State<HomeScreen> {
   final picker = ImagePicker();
   File? _image;
-  String? _fileName;
-  String? _filePath;
-  int? _fileSize;
-  File _placeHolder = File("assets/images/person.jpg");
+  String? fileName;
+  String? filePath;
+  int? fileSize;
+  // File placeHolder = File("assets/images/person.jpg");
   Future<void> pickImageFromGallery() async {
     final pickedFile = await picker.pickImage(source: ImageSource.gallery);
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
-        _fileName = pickedFile.name;
-        _filePath = pickedFile.path;
-        _fileSize = File(pickedFile.path).lengthSync();
+        fileName = pickedFile.name;
+        filePath = pickedFile.path;
+        fileSize = File(pickedFile.path).lengthSync();
       });
     }
   }
@@ -35,9 +35,9 @@ class _HomeScreenState extends State<HomeScreen> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
-        _fileName = pickedFile.name;
-        _filePath = pickedFile.path;
-        _fileSize = File(pickedFile.path).lengthSync();
+        fileName = pickedFile.name;
+        filePath = pickedFile.path;
+        fileSize = File(pickedFile.path).lengthSync();
       });
     }
   }
@@ -101,8 +101,16 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.black,
               borderRadius: BorderRadius.circular(100),
             ),
-            child: Image(image: FileImage(_image ?? _placeHolder)),
+            child: CircleAvatar(
+              radius: 50,
+              backgroundColor: Colors.black,
+              backgroundImage:
+                  _image != null
+                      ? FileImage(_image!)
+                      : const AssetImage("assets/images/person.jpg"),
+            ),
           ),
+
           SizedBox(height: 20),
           TextButton(
             onPressed: () {
