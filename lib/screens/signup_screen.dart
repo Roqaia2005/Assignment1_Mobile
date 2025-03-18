@@ -35,6 +35,7 @@ class _SignupScreenState extends State<SignupScreen> {
       if (status == InternetStatus.connected) {
         if (box.isNotEmpty) {
           await syncOfflineUsersToFirebase();
+          await syncOnlineUsersToHive();
         }
       }
     });
@@ -389,5 +390,33 @@ Future<void> syncOfflineUsersToFirebase() async {
     } catch (e) {
       print("Failed to sync ${student.email}: $e");
     }
+  }
+}
+
+Future<void> syncOnlineUsersToHive() async {
+  try {
+    QuerySnapshot querySnapshot =
+        await FirebaseFirestore.instance.collection("students").get();
+
+    for (var doc in querySnapshot.docs) {
+      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
+
+      Student student = Student(
+        id: data['id'],
+        name: data['name'],
+        email: data['email'],
+        gender: data['gender'],
+        level: data['level'],
+      );
+
+      if (!box.containsKey(student.id)) {
+        await box.put(student.id, student);
+        print("Synced ${student.email} to Hive");
+      }
+    }
+
+    print("Successfully synced all online users to Hive");
+  } catch (e) {
+    print("Failed to sync online users to Hive: $e");
   }
 }
