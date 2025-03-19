@@ -117,29 +117,13 @@ class _SignupScreenState extends State<SignupScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      buildTextField(
-                        "Email",
-                        emailController,
-                        false,
-                        validator: (value) {
-                          if (value?.isEmpty ?? true) {
-                            return "This field is required";
-                          }
-                          if (!RegExp(r'^[0-9]+@stud\.fci-cu\.edu\.eg$').hasMatch(value!)) {
-                            return "Invalid email format. Example: studentID@stud.fci-cu.edu.eg";
-                          }
-                          if (value.split('@')[0] != idController.text) {
-                            return "Email ID must match with your ID";
-                          }
-                          return null;
-                        },
-                      ),
+                      buildTextField("Email", emailController, false, validator: validateEmail),
                       const SizedBox(height: 10),
-                      buildTextField("Level (Optional)", levelController, false),
+                      buildTextField("Level (Optional)", levelController, false, validator: validateLevel),
                       const SizedBox(height: 10),
-                      buildTextField("Password", passwordController, true),
+                      buildTextField("Password", passwordController, true, validator: validatePassword),
                       const SizedBox(height: 10),
-                      buildTextField("Confirm Password", confirmPasswordController, true),
+                      buildTextField("Confirm Password", confirmPasswordController, true, validator: validateConfirmPassword),
                       const SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
@@ -225,7 +209,9 @@ class _SignupScreenState extends State<SignupScreen> {
   }) {
     return TextFormField(
       controller: controller,
-      obscureText: isPassword,
+      obscureText: isPassword
+      ? (controller == passwordController ? obscure : obscureConfirm)
+        : false,
       validator: validator,
       decoration: InputDecoration(
         hintText: hint,
@@ -251,6 +237,46 @@ class _SignupScreenState extends State<SignupScreen> {
             : null,
       ),
     );
+  }
+
+  String? validateEmail(String? value) {
+    if (value?.isEmpty ?? true) {
+      return "This field is required";
+    }
+    if (!RegExp(r'^[0-9]+@stud\.fci-cu\.edu\.eg$').hasMatch(value!)) {
+      return "Invalid email format. Example: studentID@stud.fci-cu.edu.eg";
+    }
+    if (value.split('@')[0] != idController.text) {
+      return "Email ID must match with your ID";
+    }
+    return null;
+  }
+
+  String? validateLevel(String? value) {
+    if (value != null && value.isNotEmpty && !RegExp(r'^[1-4]$').hasMatch(value)) {
+      return "Select your level from 1 to 4";
+    }
+    return null;
+  }
+
+  String? validatePassword(String? value) {
+    if (value?.isEmpty ?? true) {
+      return "This field is required";
+    }
+    if (!RegExp(r'^(?=.*[0-9]).{8,}$').hasMatch(value!)) {
+      return "Password must contain at least one number and 8 characters";
+    }
+    return null;
+  }
+
+  String? validateConfirmPassword(String? value) {
+    if (value?.isEmpty ?? true) {
+      return "This field is required";
+    }
+    if (value != passwordController.text) {
+      return "Passwords do not match";
+    }
+    return null;
   }
 
   void showSnackbar(String message) {
