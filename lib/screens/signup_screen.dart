@@ -27,10 +27,10 @@ class _SignupScreenState extends State<SignupScreen> {
   bool obscure = true;
   bool obscureConfirm = true;
   late StreamSubscription<InternetStatus> listener;
+
   @override
   void initState() {
     super.initState();
-
     listener = InternetConnection().onStatusChange.listen((status) async {
       if (status == InternetStatus.connected) {
         if (box.isNotEmpty) {
@@ -50,313 +50,208 @@ class _SignupScreenState extends State<SignupScreen> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: SingleChildScrollView(
-          child: Column(
-            children: [
-              const Image(
-                image: AssetImage("assets/images/undraw_login_wqkt.png"),
-              ),
-              TextFormField(
-                controller: idController,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return "This field is required";
-                  }
-                  if (!RegExp(r'^[0-9]+$').hasMatch(value!)) {
-                    return "ID must be numeric";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  hintText: "ID",
-                  hintStyle: const TextStyle(
-                    color: Color.fromARGB(153, 0, 0, 0),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: nameController,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return "This field is required";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  hintText: "Name",
-                  hintStyle: const TextStyle(
-                    color: Color.fromARGB(153, 0, 0, 0),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              Row(
-                children: [
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('Male'),
-                      value: 'male',
-                      groupValue: gender,
-                      onChanged: (value) {
-                        setState(() {
-                          gender = value;
-                        });
-                      },
-                    ),
-                  ),
-                  Expanded(
-                    child: RadioListTile<String>(
-                      title: const Text('Female'),
-                      value: 'female',
-                      groupValue: gender,
-                      onChanged: (value) {
-                        setState(() {
-                          gender = value;
-                        });
-                      },
-                    ),
-                  ),
-                ],
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: emailController,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return "This field is required";
-                  }
-                  if (!RegExp(
-                    r'^[0-9]+@stud\.fci-cu\.edu\.eg$',
-                  ).hasMatch(value!)) {
-                    return "Invalid email format. Example: studentID@stud.fci-cu.edu.eg";
-                  }
-                  if (value.split('@')[0] != idController.text) {
-                    return "Email ID must match with your ID";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  hintText: "Email",
-                  hintStyle: const TextStyle(
-                    color: Color.fromARGB(153, 0, 0, 0),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                validator: (value) {
-                  if (!RegExp(r'^[1-4]').hasMatch(value!)) {
-                    return "Select your level from 1 to 4";
-                  }
-
-                  return null;
-                },
-                controller: levelController,
-                keyboardType: TextInputType.number,
-                decoration: InputDecoration(
-                  hintText: "Level (Optional)",
-                  hintStyle: const TextStyle(
-                    color: Color.fromARGB(153, 0, 0, 0),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: passwordController,
-                obscureText: obscure,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return "This field is required";
-                  }
-
-                  if (!RegExp(r'^(?=.*[0-9]).{8,}$').hasMatch(value!)) {
-                    return "Password must contain at least one number and 8 characters";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    onPressed: () {
-                      setState(() {
-                        obscure = !obscure;
-                      });
-                    },
-                    icon: Icon(
-                      obscure ? Icons.visibility_off : Icons.visibility,
-                    ),
-                  ),
-                  hintText: "Password",
-                  hintStyle: const TextStyle(
-                    color: Color.fromARGB(153, 0, 0, 0),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextFormField(
-                controller: confirmPasswordController,
-                obscureText: obscureConfirm,
-                validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return "This field is required";
-                  }
-                  if (value != passwordController.text) {
-                    return "Passwords do not match";
-                  }
-                  return null;
-                },
-                decoration: InputDecoration(
-                  suffixIcon: IconButton(
-                    onPressed: () async {
-                      setState(() {
-                        obscureConfirm = !obscureConfirm;
-                      });
-                    },
-                    icon: Icon(
-                      obscureConfirm ? Icons.visibility_off : Icons.visibility,
-                    ),
-                  ),
-                  hintText: "Confirm Password",
-                  hintStyle: const TextStyle(
-                    color: Color.fromARGB(153, 0, 0, 0),
-                  ),
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(20),
-                  ),
-                ),
-              ),
-              const SizedBox(height: 20),
-              ElevatedButton(
-                onPressed: () async {
-                  if (_formKey.currentState!.validate()) {
-                    bool connected =
-                        await InternetConnection().hasInternetAccess;
-                    if (!connected) {
-                      // if not connected sign up with hive local database
-
-                      Student student = Student(
-                        email: emailController.text,
-                        password: passwordController.text,
-                        level: levelController.text,
-                        gender: gender,
-                        name: nameController.text,
-                        id: idController.text,
-                      );
-                      await box.put(idController.text, student);
-
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Sign up Successful!")),
-                      );
-
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
-                    } else {
-                      try {
-                        UserCredential userCredential = await FirebaseAuth
-                            .instance
-                            .createUserWithEmailAndPassword(
-                          email: emailController.text,
-                          password: passwordController.text,
-                        );
-                        await FirebaseFirestore.instance
-                            .collection("students")
-                            .doc(idController.text)
-                            .set({
-                          'id': idController.text,
-                          'name': nameController.text,
-                          'email': emailController.text,
-                          'gender': gender,
-                          'level': levelController.text,
-                        });
-
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(
-                            content: Text("Successfully registered"),
-                          ),
-                        );
-
-                        Navigator.push(
-                          context,
-                          MaterialPageRoute(
-                            builder: (context) => const LoginScreen(),
-                          ),
-                        );
-                      } on FirebaseAuthException catch (e) {
-                        if (e.code == 'weak-password') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("Password is too weak"),
-                            ),
-                          );
-                        } else if (e.code == 'email-already-in-use') {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("This email already exists"),
-                            ),
-                          );
-                        } else {
-                          ScaffoldMessenger.of(context).showSnackBar(
-                            const SnackBar(
-                              content: Text("The email is not valid"),
-                            ),
-                          );
-                        }
-                      }
-                    }
-                  } else {
-                    ScaffoldMessenger.of(context).showSnackBar(
-                      const SnackBar(
-                        content: Text("Please, enter all required fields"),
-                      ),
-                    );
-                  }
-                },
-                child: const Text("Sign up"),
-              ),
-              const SizedBox(height: 10),
-              Row(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  const Text("Already have an account?"),
-                  TextButton(
-                    onPressed: () {
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) => const LoginScreen(),
-                        ),
-                      );
-                    },
-                    child: const Text("Sign in"),
-                  ),
-                ],
-              ),
-            ],
+      body: Stack(
+        fit: StackFit.expand,
+        children: [
+          Image.asset(
+            "assets/images/home.jpg",
+            fit: BoxFit.cover,
           ),
-        ),
+          Container(
+            color: Colors.white.withOpacity(0.4),
+          ),
+          Center(
+            child: SingleChildScrollView(
+              padding: const EdgeInsets.symmetric(horizontal: 24),
+              child: Container(
+                padding: const EdgeInsets.all(20),
+                decoration: BoxDecoration(
+                  color: Colors.white.withOpacity(0.1),
+                  borderRadius: BorderRadius.circular(15),
+                ),
+                child: Form(
+                  key: _formKey,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    children: [
+                      const Text(
+                        "Sign Up",
+                        style: TextStyle(
+                          fontSize: 24,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.black87,
+                        ),
+                      ),
+                      const SizedBox(height: 20),
+                      buildTextField("ID", idController, false),
+                      const SizedBox(height: 10),
+                      buildTextField("Name", nameController, false),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: const Text('Male'),
+                              value: 'male',
+                              groupValue: gender,
+                              onChanged: (value) {
+                                setState(() {
+                                  gender = value;
+                                });
+                              },
+                            ),
+                          ),
+                          Expanded(
+                            child: RadioListTile<String>(
+                              title: const Text('Female'),
+                              value: 'female',
+                              groupValue: gender,
+                              onChanged: (value) {
+                                setState(() {
+                                  gender = value;
+                                });
+                              },
+                            ),
+                          ),
+                        ],
+                      ),
+                      const SizedBox(height: 10),
+                      buildTextField("Email", emailController, false),
+                      const SizedBox(height: 10),
+                      buildTextField(
+                          "Level (Optional)", levelController, false),
+                      const SizedBox(height: 10),
+                      buildTextField("Password", passwordController, true),
+                      const SizedBox(height: 10),
+                      buildTextField(
+                          "Confirm Password", confirmPasswordController, true),
+                      const SizedBox(height: 20),
+                      SizedBox(
+                        width: double.infinity,
+                        child: ElevatedButton(
+                          onPressed: () async {
+                            if (_formKey.currentState!.validate()) {
+                              bool connected =
+                                  await InternetConnection().hasInternetAccess;
+                              if (!connected) {
+                                Student student = Student(
+                                  email: emailController.text,
+                                  password: passwordController.text,
+                                  level: levelController.text,
+                                  gender: gender,
+                                  name: nameController.text,
+                                  id: idController.text,
+                                );
+                                await box.put(idController.text, student);
+                                showSnackbar("Sign up Successful!");
+                                navigateToLogin();
+                              } else {
+                                try {
+                                  UserCredential userCredential =
+                                      await FirebaseAuth.instance
+                                          .createUserWithEmailAndPassword(
+                                    email: emailController.text,
+                                    password: passwordController.text,
+                                  );
+                                  await FirebaseFirestore.instance
+                                      .collection("students")
+                                      .doc(idController.text)
+                                      .set({
+                                    'id': idController.text,
+                                    'name': nameController.text,
+                                    'email': emailController.text,
+                                    'gender': gender,
+                                    'level': levelController.text,
+                                  });
+                                  showSnackbar("Successfully registered");
+                                  navigateToLogin();
+                                } on FirebaseAuthException catch (e) {
+                                  if (e.code == 'weak-password') {
+                                    showSnackbar("Password is too weak");
+                                  } else if (e.code == 'email-already-in-use') {
+                                    showSnackbar("This email already exists");
+                                  } else {
+                                    showSnackbar("The email is not valid");
+                                  }
+                                }
+                              }
+                            } else {
+                              showSnackbar("Please, enter all required fields");
+                            }
+                          },
+                          child: const Text("Sign up"),
+                        ),
+                      ),
+                      const SizedBox(height: 10),
+                      Row(
+                        mainAxisAlignment: MainAxisAlignment.center,
+                        children: [
+                          const Text("Already have an account?"),
+                          TextButton(
+                            onPressed: navigateToLogin,
+                            child: const Text("Sign in"),
+                          ),
+                        ],
+                      ),
+                    ],
+                  ),
+                ),
+              ),
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  Widget buildTextField(
+      String hint, TextEditingController controller, bool isPassword) {
+    return TextFormField(
+      controller: controller,
+      obscureText: isPassword,
+      validator: (value) {
+        if (value?.isEmpty ?? true) {
+          return "This field is required";
+        }
+        return null;
+      },
+      decoration: InputDecoration(
+        hintText: hint,
+        hintStyle: const TextStyle(color: Colors.black54),
+        filled: true,
+        fillColor: Colors.white.withOpacity(0.8),
+        border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+        suffixIcon: isPassword
+            ? IconButton(
+                onPressed: () {
+                  setState(() {
+                    if (controller == passwordController) {
+                      obscure = !obscure;
+                    } else {
+                      obscureConfirm = !obscureConfirm;
+                    }
+                  });
+                },
+                icon: Icon(controller == passwordController
+                    ? (obscure ? Icons.visibility_off : Icons.visibility)
+                    : (obscureConfirm
+                        ? Icons.visibility_off
+                        : Icons.visibility)),
+              )
+            : null,
+      ),
+    );
+  }
+
+  void showSnackbar(String message) {
+    ScaffoldMessenger.of(context)
+        .showSnackBar(SnackBar(content: Text(message)));
+  }
+
+  void navigateToLogin() {
+    Navigator.push(
+        context, MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 }
 
