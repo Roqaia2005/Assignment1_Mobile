@@ -81,6 +81,7 @@ class _LoginScreenState extends State<LoginScreen> {
               child: Text("Login"),
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
+                  studentEmail = emailController.text;
                   bool connected = await InternetConnection().hasInternetAccess;
                   if (!connected) {
                     bool isStudnetExists = box.values.any(
