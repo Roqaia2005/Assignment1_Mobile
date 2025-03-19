@@ -1,6 +1,8 @@
+import 'package:hive/hive.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_registeration/helper.dart';
+import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/home_screen.dart';
 import 'package:student_registeration/screens/signup_screen.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
@@ -18,148 +20,188 @@ class _LoginScreenState extends State<LoginScreen> {
   bool obscure = true;
   final _formKey = GlobalKey<FormState>();
 
-  @override
-  void initState() {
-    super.initState();
-    studentEmail = emailController.text;
-  }
-
-  @override
-  Widget build(BuildContext context) {
-    return Scaffold(
-      body: Form(
-        key: _formKey,
-        child: Column(
-          children: [
-            const Image(
-              image: AssetImage("assets/images/undraw_login_wqkt.png"),
-            ),
-            TextFormField(
-              controller: emailController,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return "This field is required";
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                hintText: "Email",
-                hintStyle: const TextStyle(color: Color.fromARGB(153, 0, 0, 0)),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
-                ),
-              ),
-            ),
-            const SizedBox(height: 20),
-            TextFormField(
-              controller: passwordController,
-              obscureText: obscure,
-              validator: (value) {
-                if (value?.isEmpty ?? true) {
-                  return "This field is required";
-                }
-                return null;
-              },
-              decoration: InputDecoration(
-                suffixIcon: IconButton(
+  Widget buildTextField(
+    String hint,
+    TextEditingController controller,
+    bool isPassword,
+  ) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: TextFormField(
+        controller: controller,
+        obscureText: isPassword ? obscure : false,
+        validator: (value) {
+          if (value?.isEmpty ?? true) {
+            return "This field is required";
+          }
+          return null;
+        },
+        decoration: InputDecoration(
+          hintText: hint,
+          hintStyle: const TextStyle(color: Colors.black54),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.8),
+          border: OutlineInputBorder(borderRadius: BorderRadius.circular(15)),
+          suffixIcon: isPassword
+              ? IconButton(
                   onPressed: () {
                     setState(() {
                       obscure = !obscure;
                     });
                   },
                   icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
-                ),
-                hintText: "Password",
-                hintStyle: const TextStyle(color: Color.fromARGB(153, 0, 0, 0)),
-                border: OutlineInputBorder(
-                  borderRadius: BorderRadius.circular(20),
+                )
+              : null,
+        ),
+      ),
+    );
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return Scaffold(
+      body: Stack(
+        children: [
+          // Background Image
+          Positioned.fill(
+            child: Image.asset(
+              "assets/images/home.jpg",
+              fit: BoxFit.cover,
+            ),
+          ),
+
+          // Centered Form
+          Align(
+            alignment: Alignment.center,
+            child: Container(
+              padding: const EdgeInsets.all(20),
+              margin: const EdgeInsets.symmetric(horizontal: 30),
+              decoration: BoxDecoration(
+                color: Colors.white.withOpacity(0.5),
+                borderRadius: BorderRadius.circular(15),
+                boxShadow: [
+                  BoxShadow(
+                    color: Colors.black.withOpacity(0.2),
+                    blurRadius: 8,
+                    spreadRadius: 2,
+                  ),
+                ],
+              ),
+              child: Form(
+                key: _formKey,
+                child: Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    const Text(
+                      "Login",
+                      style:
+                          TextStyle(fontSize: 22, fontWeight: FontWeight.bold),
+                    ),
+                    const SizedBox(height: 20),
+                    buildTextField("Email", emailController, false),
+                    buildTextField("Password", passwordController, true),
+                    const SizedBox(height: 20),
+                    ElevatedButton(
+                      style: ElevatedButton.styleFrom(
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: 40, vertical: 12),
+                        shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(15)),
+                      ),
+                      child: const Text("Login"),
+                      onPressed: () async {
+                        if (_formKey.currentState!.validate()) {
+                          studentEmail = emailController.text;
+                          bool connected =
+                              await InternetConnection().hasInternetAccess;
+
+                          if (!connected) {
+                            bool isStudentExists = box.values.any(
+                              (student) =>
+                                  student.email == emailController.text &&
+                                  student.password == passwordController.text,
+                            );
+
+                            if (isStudentExists) {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Sign in Successful!")),
+                              );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomeScreen()),
+                              );
+                            } else {
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Invalid credentials")),
+                              );
+                            }
+                          } else {
+                            try {
+                              await FirebaseAuth.instance
+                                  .signInWithEmailAndPassword(
+                                email: emailController.text,
+                                password: passwordController.text,
+                              );
+                              ScaffoldMessenger.of(context).showSnackBar(
+                                const SnackBar(
+                                    content: Text("Login successful!")),
+                              );
+                              Navigator.pushReplacement(
+                                context,
+                                MaterialPageRoute(
+                                    builder: (context) => const HomeScreen()),
+                              );
+                            } on FirebaseAuthException catch (e) {
+                              if (e.code == 'invalid-credential') {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  const SnackBar(
+                                      content:
+                                          Text("Invalid Email or password")),
+                                );
+                              } else {
+                                ScaffoldMessenger.of(context).showSnackBar(
+                                  SnackBar(
+                                      content: Text("Error: ${e.message}")),
+                                );
+                              }
+                            }
+                          }
+                        } else {
+                          ScaffoldMessenger.of(context).showSnackBar(
+                            const SnackBar(
+                              content: Text("Please fill all fields"),
+                            ),
+                          );
+                        }
+                      },
+                    ),
+                    const SizedBox(height: 15),
+                    Row(
+                      mainAxisAlignment: MainAxisAlignment.center,
+                      children: [
+                        const Text("Don't have an account?"),
+                        TextButton(
+                          onPressed: () {
+                            Navigator.push(
+                              context,
+                              MaterialPageRoute(
+                                builder: (context) => const SignupScreen(),
+                              ),
+                            );
+                          },
+                          child: const Text("Sign up"),
+                        ),
+                      ],
+                    ),
+                  ],
                 ),
               ),
             ),
-            const SizedBox(height: 20),
-            ElevatedButton(
-              child: Text("Login"),
-              onPressed: () async {
-                if (_formKey.currentState!.validate()) {
-                  studentEmail = emailController.text;
-                  bool connected = await InternetConnection().hasInternetAccess;
-                  if (!connected) {
-                    bool isStudnetExists = box.values.any(
-                      (s) =>
-                          s.email == emailController.text &&
-                          s.password == passwordController.text,
-                    );
-                    if (isStudnetExists) {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("Sign in Successful!")),
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(
-                          builder: (context) {
-                            return HomeScreen();
-                          },
-                        ),
-                      );
-                    } else {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text("Invalid credentials")),
-                      );
-                    }
-                  } else {
-                    try {
-                      await FirebaseAuth.instance.signInWithEmailAndPassword(
-                        email: emailController.text,
-                        password: passwordController.text,
-                      );
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        SnackBar(content: Text("login successfully.")),
-                      );
-                      Navigator.push(
-                        context,
-                        MaterialPageRoute(builder: (context) => HomeScreen()),
-                      );
-                    } on FirebaseAuthException catch (e) {
-                      if (e.code == 'invalid-credential') {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Invalid Email or password")),
-                        );
-                      } else {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text("Error: ${e.message}")),
-                        );
-                      }
-                    }
-                  }
-                } else {
-                  ScaffoldMessenger.of(context).showSnackBar(
-                    const SnackBar(
-                      content: Text("Please, enter all required fields"),
-                    ),
-                  );
-                }
-              },
-            ),
-            const SizedBox(height: 10),
-            Row(
-              mainAxisAlignment: MainAxisAlignment.center,
-              children: [
-                const Text("Don't have an account?"),
-                TextButton(
-                  onPressed: () {
-                    Navigator.push(
-                      context,
-                      MaterialPageRoute(
-                        builder: (context) => const SignupScreen(),
-                      ),
-                    );
-                  },
-                  child: const Text("Sign up"),
-                ),
-              ],
-            ),
-          ],
-        ),
+          ),
+        ],
       ),
     );
   }
