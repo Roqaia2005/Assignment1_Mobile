@@ -14,6 +14,19 @@ class _HomeScreenState extends State<HomeScreen> {
   final picker = ImagePicker();
   File? _image;
 
+  // Text controllers for editable fields
+  final nameController = TextEditingController(text: "John Doe");
+  final emailController =
+      TextEditingController(text: "email@stud.fci-cu.edu.eg");
+  final studentIdController = TextEditingController(text: "20220424");
+  final passwordController = TextEditingController(text: "********");
+
+  // Gender selection
+  String selectedGender = "Male";
+
+  // Level selection
+  String selectedLevel = "Level 3";
+
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
     if (pickedFile != null) {
@@ -52,6 +65,20 @@ class _HomeScreenState extends State<HomeScreen> {
           ],
         ),
       ),
+    );
+  }
+
+  void updateProfile() {
+    // Simulate profile update (hook this to your backend)
+    print("Updated Profile:");
+    print("Name: ${nameController.text}");
+    print("Gender: $selectedGender");
+    print("Email: ${emailController.text}");
+    print("Student ID: ${studentIdController.text}");
+    print("Level: $selectedLevel");
+    print("Password: ${passwordController.text}");
+    ScaffoldMessenger.of(context).showSnackBar(
+      const SnackBar(content: Text("Profile Updated Successfully")),
     );
   }
 
@@ -115,20 +142,22 @@ class _HomeScreenState extends State<HomeScreen> {
                 ),
                 child: Column(
                   children: [
-                    buildProfileField("Name", "John Doe"),
-                    buildProfileField("Gender", "Male"),
-                    buildProfileField("Email", "email@stud.fci-cu.edu.eg"),
-                    buildProfileField("Student ID", "20220424"),
-                    buildProfileField("Level", "3"),
-                    buildProfileField("Password", "********"),
+                    buildEditableField("Name", nameController),
+                    const SizedBox(height: 12),
+                    buildGenderSelector(),
+                    const SizedBox(height: 12),
+                    buildEditableField("Email", emailController),
+                    buildEditableField("Student ID", studentIdController),
+                    const SizedBox(height: 12),
+                    buildLevelDropdown(),
+                    buildEditableField("Password", passwordController,
+                        obscureText: true),
                   ],
                 ),
               ),
               const SizedBox(height: 25),
               ElevatedButton(
-                onPressed: () {
-                  print("Profile Updated");
-                },
+                onPressed: updateProfile,
                 style: ElevatedButton.styleFrom(
                   backgroundColor: Colors.pinkAccent,
                   shape: RoundedRectangleBorder(
@@ -170,15 +199,97 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildProfileField(String label, String value) {
+  Widget buildEditableField(String label, TextEditingController controller,
+      {bool obscureText = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
-        initialValue: value,
-        readOnly: true,
+        controller: controller,
+        obscureText: obscureText,
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           labelText: label,
+          labelStyle: const TextStyle(
+              color: Colors.pinkAccent, fontWeight: FontWeight.bold),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.8),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+        ),
+      ),
+    );
+  }
+
+  Widget buildGenderSelector() {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Gender",
+          style: TextStyle(
+              fontSize: 16,
+              color: Colors.pinkAccent,
+              fontWeight: FontWeight.bold),
+        ),
+        Row(
+          children: [
+            Expanded(
+              child: RadioListTile<String>(
+                title: const Text("Male"),
+                value: "Male",
+                groupValue: selectedGender,
+                activeColor: Colors.pinkAccent,
+                onChanged: (value) {
+                  setState(() {
+                    selectedGender = value!;
+                  });
+                },
+              ),
+            ),
+            Expanded(
+              child: RadioListTile<String>(
+                title: const Text("Female"),
+                value: "Female",
+                groupValue: selectedGender,
+                activeColor: Colors.pinkAccent,
+                onChanged: (value) {
+                  setState(() {
+                    selectedGender = value!;
+                  });
+                },
+              ),
+            ),
+          ],
+        ),
+      ],
+    );
+  }
+
+  Widget buildLevelDropdown() {
+    List<String> levels = ["Level 1", "Level 2", "Level 3", "Level 4"];
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: DropdownButtonFormField<String>(
+        value: selectedLevel,
+        items: levels.map((level) {
+          return DropdownMenuItem<String>(
+            value: level,
+            child: Text(level, style: const TextStyle(fontSize: 16)),
+          );
+        }).toList(),
+        onChanged: (value) {
+          setState(() {
+            selectedLevel = value!;
+          });
+        },
+        decoration: InputDecoration(
+          labelText: "Level",
           labelStyle: const TextStyle(
               color: Colors.pinkAccent, fontWeight: FontWeight.bold),
           filled: true,
