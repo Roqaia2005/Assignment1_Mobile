@@ -1,4 +1,3 @@
-import 'dart:async';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
 import 'package:student_registeration/helper.dart';
@@ -6,6 +5,7 @@ import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
+import 'dart:async';
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
@@ -117,23 +117,36 @@ class _SignupScreenState extends State<SignupScreen> {
                         ],
                       ),
                       const SizedBox(height: 10),
-                      buildTextField("Email", emailController, false),
-                      const SizedBox(height: 10),
                       buildTextField(
-                          "Level (Optional)", levelController, false),
+                        "Email",
+                        emailController,
+                        false,
+                        validator: (value) {
+                          if (value?.isEmpty ?? true) {
+                            return "This field is required";
+                          }
+                          if (!RegExp(r'^[0-9]+@stud\.fci-cu\.edu\.eg$').hasMatch(value!)) {
+                            return "Invalid email format. Example: studentID@stud.fci-cu.edu.eg";
+                          }
+                          if (value.split('@')[0] != idController.text) {
+                            return "Email ID must match with your ID";
+                          }
+                          return null;
+                        },
+                      ),
+                      const SizedBox(height: 10),
+                      buildTextField("Level (Optional)", levelController, false),
                       const SizedBox(height: 10),
                       buildTextField("Password", passwordController, true),
                       const SizedBox(height: 10),
-                      buildTextField(
-                          "Confirm Password", confirmPasswordController, true),
+                      buildTextField("Confirm Password", confirmPasswordController, true),
                       const SizedBox(height: 20),
                       SizedBox(
                         width: double.infinity,
                         child: ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              bool connected =
-                                  await InternetConnection().hasInternetAccess;
+                              bool connected = await InternetConnection().hasInternetAccess;
                               if (!connected) {
                                 Student student = Student(
                                   email: emailController.text,
@@ -149,8 +162,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               } else {
                                 try {
                                   UserCredential userCredential =
-                                      await FirebaseAuth.instance
-                                          .createUserWithEmailAndPassword(
+                                      await FirebaseAuth.instance.createUserWithEmailAndPassword(
                                     email: emailController.text,
                                     password: passwordController.text,
                                   );
@@ -206,16 +218,15 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   Widget buildTextField(
-      String hint, TextEditingController controller, bool isPassword) {
+    String hint,
+    TextEditingController controller,
+    bool isPassword, {
+    String? Function(String?)? validator,
+  }) {
     return TextFormField(
       controller: controller,
       obscureText: isPassword,
-      validator: (value) {
-        if (value?.isEmpty ?? true) {
-          return "This field is required";
-        }
-        return null;
-      },
+      validator: validator,
       decoration: InputDecoration(
         hintText: hint,
         hintStyle: const TextStyle(color: Colors.black54),
@@ -235,9 +246,7 @@ class _SignupScreenState extends State<SignupScreen> {
                 },
                 icon: Icon(controller == passwordController
                     ? (obscure ? Icons.visibility_off : Icons.visibility)
-                    : (obscureConfirm
-                        ? Icons.visibility_off
-                        : Icons.visibility)),
+                    : (obscureConfirm ? Icons.visibility_off : Icons.visibility)),
               )
             : null,
       ),
@@ -245,13 +254,11 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 
   void showSnackbar(String message) {
-    ScaffoldMessenger.of(context)
-        .showSnackBar(SnackBar(content: Text(message)));
+    ScaffoldMessenger.of(context).showSnackBar(SnackBar(content: Text(message)));
   }
 
   void navigateToLogin() {
-    Navigator.push(
-        context, MaterialPageRoute(builder: (context) => const LoginScreen()));
+    Navigator.push(context, MaterialPageRoute(builder: (context) => const LoginScreen()));
   }
 }
 
