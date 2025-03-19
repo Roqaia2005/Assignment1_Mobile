@@ -68,7 +68,6 @@ class _LoginScreenState extends State<LoginScreen> {
                   },
                   icon: Icon(obscure ? Icons.visibility_off : Icons.visibility),
                 ),
-
                 hintText: "Password",
                 hintStyle: const TextStyle(color: Color.fromARGB(153, 0, 0, 0)),
                 border: OutlineInputBorder(
@@ -76,21 +75,21 @@ class _LoginScreenState extends State<LoginScreen> {
                 ),
               ),
             ),
-
             const SizedBox(height: 20),
             ElevatedButton(
               child: Text("Login"),
-
               onPressed: () async {
                 if (_formKey.currentState!.validate()) {
+                  studentEmail = emailController.text;
+
                   bool connected = await InternetConnection().hasInternetAccess;
                   if (!connected) {
-                    bool isStudentExists = box.values.any(
+                    bool isStudnetExists = box.values.any(
                       (s) =>
                           s.email == emailController.text &&
                           s.password == passwordController.text,
                     );
-                    if (isStudentExists) {
+                    if (isStudnetExists) {
                       ScaffoldMessenger.of(context).showSnackBar(
                         SnackBar(content: Text("Sign in Successful!")),
                       );

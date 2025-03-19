@@ -2,6 +2,8 @@ import 'dart:io';
 import 'login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
+import 'package:student_registeration/helper.dart';
+import 'package:student_registeration/models/student.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -14,18 +16,56 @@ class _HomeScreenState extends State<HomeScreen> {
   final picker = ImagePicker();
   File? _image;
 
-  // Text controllers for editable fields
-  final nameController = TextEditingController(text: "John Doe");
-  final emailController =
-      TextEditingController(text: "email@stud.fci-cu.edu.eg");
-  final studentIdController = TextEditingController(text: "20220424");
-  final passwordController = TextEditingController(text: "********");
+  final nameController = TextEditingController();
+  final emailController = TextEditingController();
+  final studentIdController = TextEditingController();
+  final passwordController = TextEditingController();
+  Student? studentData;
 
-  // Gender selection
-  String selectedGender = "Male";
+  String? selectedGender = "Male";
 
-  // Level selection
-  String selectedLevel = "Level 3";
+  String? selectedLevel = "Level 1";
+  Future<Student?> getStudentData() async {
+    if (studentEmail == null) return null;
+    print("Student email is: $studentEmail");
+
+    var students = box.values.toList();
+    print("Hive values: $students");
+
+    for (var student in students) {
+      if (student.email == studentEmail) {
+        print("Student found: ${student.name}");
+        return student;
+      }
+    }
+
+    print("No student found with this email");
+    return null;
+  }
+
+  Future<void> loadUserData() async {
+    Student? student = await getStudentData();
+
+    if (student != null) {
+      setState(() {
+        studentData = student;
+
+        nameController.text = studentData?.name ?? "";
+        emailController.text = studentData?.email ?? "";
+        studentIdController.text = studentData?.id ?? "";
+        passwordController.text = studentData?.password ?? "";
+        selectedGender = studentData?.gender ?? "Male"; // Default gender
+        selectedLevel = studentData?.level ?? "Level 1"; // Default level
+      });
+    }
+  }
+
+  @override
+  void initState() {
+    super.initState();
+    loadUserData();
+    printdata();
+  }
 
   Future<void> pickImage(ImageSource source) async {
     final pickedFile = await picker.pickImage(source: source);
@@ -68,15 +108,18 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  void updateProfile() {
-    // Simulate profile update (hook this to your backend)
-    print("Updated Profile:");
-    print("Name: ${nameController.text}");
-    print("Gender: $selectedGender");
-    print("Email: ${emailController.text}");
-    print("Student ID: ${studentIdController.text}");
-    print("Level: $selectedLevel");
-    print("Password: ${passwordController.text}");
+  void updateProfile() async {
+    Student updatedStudent = Student(
+      name: nameController.text,
+      email: emailController.text,
+      id: studentIdController.text,
+      password: passwordController.text,
+      gender: selectedGender,
+      level: selectedLevel,
+    );
+
+    await box.put(studentIdController.text, updatedStudent); // Save to Hive
+
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Profile Updated Successfully")),
     );
@@ -149,7 +192,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     buildEditableField("Email", emailController),
                     buildEditableField("Student ID", studentIdController),
                     const SizedBox(height: 12),
-                    buildLevelDropdown(),
+                    // buildLevelDropdown(),
                     buildEditableField("Password", passwordController,
                         obscureText: true),
                   ],
@@ -271,39 +314,39 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  Widget buildLevelDropdown() {
-    List<String> levels = ["Level 1", "Level 2", "Level 3", "Level 4"];
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: DropdownButtonFormField<String>(
-        value: selectedLevel,
-        items: levels.map((level) {
-          return DropdownMenuItem<String>(
-            value: level,
-            child: Text(level, style: const TextStyle(fontSize: 16)),
-          );
-        }).toList(),
-        onChanged: (value) {
-          setState(() {
-            selectedLevel = value!;
-          });
-        },
-        decoration: InputDecoration(
-          labelText: "Level",
-          labelStyle: const TextStyle(
-              color: Colors.pinkAccent, fontWeight: FontWeight.bold),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.8),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
-        ),
-      ),
-    );
-  }
+  // Widget buildLevelDropdown() {
+  //   List<String> levels = ["Level 1", "Level 2", "Level 3", "Level 4"];
+  //   return Padding(
+  //     padding: const EdgeInsets.symmetric(vertical: 8),
+  //     child: DropdownButtonFormField<String>(
+  //       value: selectedLevel,
+  //       items: levels.map((level) {
+  //         return DropdownMenuItem<String>(
+  //           value: level,
+  //           child: Text(level, style: const TextStyle(fontSize: 16)),
+  //         );
+  //       }).toList(),
+  //       onChanged: (value) {
+  //         setState(() {
+  //           selectedLevel = value!;
+  //         });
+  //       },
+  //       decoration: InputDecoration(
+  //         labelText: "Level",
+  //         labelStyle: const TextStyle(
+  //             color: Colors.pinkAccent, fontWeight: FontWeight.bold),
+  //         filled: true,
+  //         fillColor: Colors.white.withOpacity(0.8),
+  //         border: OutlineInputBorder(
+  //           borderRadius: BorderRadius.circular(10),
+  //           borderSide: BorderSide.none,
+  //         ),
+  //         enabledBorder: OutlineInputBorder(
+  //           borderRadius: BorderRadius.circular(10),
+  //           borderSide: BorderSide(color: Colors.grey.shade300),
+  //         ),
+  //       ),
+  //     ),
+  //   );
+  // }
 }

@@ -33,4 +33,8 @@ class Student extends HiveObject {
     gender = json['gender'];
     level = json['level'];
   }
+  @override
+  String toString() {
+    return 'Student{name: $name, email: $email, id: $id, password: $password, gender: $gender, level: $level}';
+  }
 }
