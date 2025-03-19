@@ -1,4 +1,8 @@
 import 'package:hive/hive.dart';
 import 'package:student_registeration/models/student.dart';
 
-var box = Hive.box<Student>('students');
+late Box<Student> box;
+
+Future<void> initializeHive() async {
+  box = await Hive.openBox<Student>('students');
+}

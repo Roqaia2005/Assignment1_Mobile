@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:student_registeration/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
 import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 import 'dart:async';
+
 
 class SignupScreen extends StatefulWidget {
   const SignupScreen({super.key});
