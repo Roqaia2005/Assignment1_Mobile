@@ -62,13 +62,12 @@ class _HomeScreenState extends State<HomeScreen> {
               color: Colors.grey.withOpacity(0.5),
               padding: EdgeInsets.symmetric(horizontal: 8),
               child: Row(
-                // mainAxisSize: MainAxisSize.min,
                 mainAxisAlignment: MainAxisAlignment.spaceBetween,
                 children: [
                   Expanded(
                     flex: 2,
                     child: Text(
-                      'Email: email@stud.fci-cu.edu.eg',
+                      '${box.get('email')}',
                       softWrap: true,
                       style: TextStyle(
                         overflow: TextOverflow.ellipsis,
@@ -81,7 +80,7 @@ class _HomeScreenState extends State<HomeScreen> {
                   const VerticalDivider(thickness: 2, color: Colors.grey),
                   Expanded(
                     child: Text(
-                      'ID: 20220424',
+                      'ID: ${box.get('id') ?? 'No ID'}',
                       softWrap: true,
                       style: TextStyle(
                         color: Colors.black,
@@ -104,13 +103,12 @@ class _HomeScreenState extends State<HomeScreen> {
             child: CircleAvatar(
               radius: 50,
               backgroundColor: Colors.black,
-              backgroundImage:
-                  _image != null
-                      ? FileImage(_image!)
-                      : const AssetImage("assets/images/person.jpg"),
+              backgroundImage: _image != null
+                  ? FileImage(_image!)
+                  : const AssetImage("assets/images/person.jpg")
+                      as ImageProvider,
             ),
           ),
-
           SizedBox(height: 20),
           TextButton(
             onPressed: () {
@@ -130,7 +128,6 @@ class _HomeScreenState extends State<HomeScreen> {
               style: TextStyle(color: Colors.black, fontSize: 20),
             ),
           ),
-
           SizedBox(height: 10),
           TextButton(
             onPressed: () {
