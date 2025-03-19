@@ -157,9 +157,6 @@ class _SignupScreenState extends State<SignupScreen> {
               const SizedBox(height: 20),
               TextFormField(
                 validator: (value) {
-                  if (value?.isEmpty ?? true) {
-                    return "This field is required";
-                  }
                   if (!RegExp(r'^[1-4]').hasMatch(value!)) {
                     return "Select your level from 1 to 4";
                   }
@@ -203,7 +200,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       obscure ? Icons.visibility_off : Icons.visibility,
                     ),
                   ),
-
                   hintText: "Password",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -237,7 +233,6 @@ class _SignupScreenState extends State<SignupScreen> {
                       obscureConfirm ? Icons.visibility_off : Icons.visibility,
                     ),
                   ),
-
                   hintText: "Confirm Password",
                   hintStyle: const TextStyle(
                     color: Color.fromARGB(153, 0, 0, 0),
@@ -281,19 +276,19 @@ class _SignupScreenState extends State<SignupScreen> {
                         UserCredential userCredential = await FirebaseAuth
                             .instance
                             .createUserWithEmailAndPassword(
-                              email: emailController.text,
-                              password: passwordController.text,
-                            );
+                          email: emailController.text,
+                          password: passwordController.text,
+                        );
                         await FirebaseFirestore.instance
                             .collection("students")
                             .doc(idController.text)
                             .set({
-                              'id': idController.text,
-                              'name': nameController.text,
-                              'email': emailController.text,
-                              'gender': gender,
-                              'level': levelController.text,
-                            });
+                          'id': idController.text,
+                          'name': nameController.text,
+                          'email': emailController.text,
+                          'gender': gender,
+                          'level': levelController.text,
+                        });
 
                         ScaffoldMessenger.of(context).showSnackBar(
                           const SnackBar(
@@ -369,22 +364,22 @@ class _SignupScreenState extends State<SignupScreen> {
 Future<void> syncOfflineUsersToFirebase() async {
   for (var student in box.values) {
     try {
-      UserCredential userCredential = await FirebaseAuth.instance
-          .createUserWithEmailAndPassword(
-            email: student.email!,
-            password: student.password!,
-          );
+      UserCredential userCredential =
+          await FirebaseAuth.instance.createUserWithEmailAndPassword(
+        email: student.email!,
+        password: student.password!,
+      );
 
       await FirebaseFirestore.instance
           .collection("students")
           .doc(student.id)
           .set({
-            'id': student.id,
-            'name': student.name,
-            'email': student.email,
-            'gender': student.gender,
-            'level': student.level,
-          });
+        'id': student.id,
+        'name': student.name,
+        'email': student.email,
+        'gender': student.gender,
+        'level': student.level,
+      });
 
       print("Synced ${student.email} to Firebase");
     } catch (e) {
