@@ -54,8 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
         emailController.text = studentData?.email ?? "";
         studentIdController.text = studentData?.id ?? "";
         passwordController.text = studentData?.password ?? "";
-        selectedGender = studentData?.gender ?? "Male"; // Default gender
-        selectedLevel = studentData?.level ?? "Level 1"; // Default level
+        selectedGender = studentData?.gender ?? "Male";
+        selectedLevel = studentData?.level ?? "Level 1";
       });
     }
   }
@@ -117,7 +117,7 @@ class _HomeScreenState extends State<HomeScreen> {
       level: selectedLevel,
     );
 
-    await box.put(studentIdController.text, updatedStudent); // Save to Hive
+    await box.put(studentIdController.text, updatedStudent);
 
     ScaffoldMessenger.of(context).showSnackBar(
       const SnackBar(content: Text("Profile Updated Successfully")),
