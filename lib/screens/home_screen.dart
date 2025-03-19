@@ -23,6 +23,38 @@ class _HomeScreenState extends State<HomeScreen> {
     }
   }
 
+  void _showImagePickerModal() {
+    showModalBottomSheet(
+      context: context,
+      shape: const RoundedRectangleBorder(
+        borderRadius: BorderRadius.vertical(top: Radius.circular(15)),
+      ),
+      builder: (context) => Padding(
+        padding: const EdgeInsets.all(10.0),
+        child: Wrap(
+          children: [
+            ListTile(
+              leading: const Icon(Icons.image, color: Colors.pinkAccent),
+              title: const Text("Upload from Gallery"),
+              onTap: () {
+                pickImage(ImageSource.gallery);
+                Navigator.pop(context);
+              },
+            ),
+            ListTile(
+              leading: const Icon(Icons.camera, color: Colors.pinkAccent),
+              title: const Text("Take a Photo"),
+              onTap: () {
+                pickImage(ImageSource.camera);
+                Navigator.pop(context);
+              },
+            ),
+          ],
+        ),
+      ),
+    );
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -41,14 +73,9 @@ class _HomeScreenState extends State<HomeScreen> {
       ),
       extendBodyBehindAppBar: true,
       body: Container(
-        decoration: const BoxDecoration(
-          image: DecorationImage(
-            image: AssetImage("assets/images/background.jpg/"),
-            fit: BoxFit.cover,
-          ),
-        ),
+        color: Colors.pinkAccent.shade100.withOpacity(0.2),
         child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 40),
+          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
           child: Column(
             children: [
               Stack(
@@ -59,44 +86,10 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: Colors.white,
                     backgroundImage: _image != null
                         ? FileImage(_image!)
-                        : const AssetImage("assets/images/person.jpg")
-                            as ImageProvider,
+                        : const AssetImage("assets/images/person.jpg"),
                   ),
                   InkWell(
-                    onTap: () {
-                      showModalBottomSheet(
-                        context: context,
-                        shape: const RoundedRectangleBorder(
-                          borderRadius:
-                              BorderRadius.vertical(top: Radius.circular(15)),
-                        ),
-                        builder: (context) => Padding(
-                          padding: const EdgeInsets.all(10.0),
-                          child: Wrap(
-                            children: [
-                              ListTile(
-                                leading: const Icon(Icons.image,
-                                    color: Colors.pinkAccent),
-                                title: const Text("Upload from Gallery"),
-                                onTap: () {
-                                  pickImage(ImageSource.gallery);
-                                  Navigator.pop(context);
-                                },
-                              ),
-                              ListTile(
-                                leading: const Icon(Icons.camera,
-                                    color: Colors.pinkAccent),
-                                title: const Text("Take a Photo"),
-                                onTap: () {
-                                  pickImage(ImageSource.camera);
-                                  Navigator.pop(context);
-                                },
-                              ),
-                            ],
-                          ),
-                        ),
-                      );
-                    },
+                    onTap: _showImagePickerModal,
                     child: const CircleAvatar(
                       radius: 24,
                       backgroundColor: Colors.pinkAccent,
