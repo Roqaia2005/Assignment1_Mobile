@@ -54,8 +54,8 @@ class _HomeScreenState extends State<HomeScreen> {
         emailController.text = studentData?.email ?? "";
         studentIdController.text = studentData?.id ?? "";
         passwordController.text = studentData?.password ?? "";
-        selectedGender = studentData?.gender ?? "Male";
-        selectedLevel = studentData?.level ?? "Level 1";
+        selectedGender = studentData?.gender ?? "Male"; // Default gender
+        selectedLevel = studentData?.level ?? "Level 1"; // Default level
       });
     }
   }

@@ -6,7 +6,6 @@ import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
 
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
@@ -16,7 +15,7 @@ void main() async {
   await Hive.openBox<Student>('students');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print(box.values.toList());
+  print("hive valuesssssssssssssssssssssssss${box.values.toList()}");
 
   runApp(const MyApp());
 }
