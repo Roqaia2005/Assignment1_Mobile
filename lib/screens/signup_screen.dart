@@ -35,7 +35,6 @@ class _SignupScreenState extends State<SignupScreen> {
       if (status == InternetStatus.connected) {
         if (box.isNotEmpty) {
           await syncOfflineUsersToFirebase();
-          await syncOnlineUsersToHive();
         }
       }
     });
@@ -135,50 +134,17 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
-                              bool connected =
-                                  await InternetConnection().hasInternetAccess;
-                              if (!connected) {
-                                Student student = Student(
-                                  email: emailController.text,
-                                  password: passwordController.text,
-                                  level: levelController.text,
-                                  gender: gender,
-                                  name: nameController.text,
-                                  id: idController.text,
-                                );
-                                await box.put(idController.text, student);
-                                showSnackbar("Sign up Successful!");
-                                navigateToLogin();
-                              } else {
-                                try {
-                                  UserCredential userCredential =
-                                      await FirebaseAuth.instance
-                                          .createUserWithEmailAndPassword(
-                                    email: emailController.text,
-                                    password: passwordController.text,
-                                  );
-                                  await FirebaseFirestore.instance
-                                      .collection("students")
-                                      .doc(idController.text)
-                                      .set({
-                                    'id': idController.text,
-                                    'name': nameController.text,
-                                    'email': emailController.text,
-                                    'gender': gender,
-                                    'level': levelController.text,
-                                  });
-                                  showSnackbar("Successfully registered");
-                                  navigateToLogin();
-                                } on FirebaseAuthException catch (e) {
-                                  if (e.code == 'weak-password') {
-                                    showSnackbar("Password is too weak");
-                                  } else if (e.code == 'email-already-in-use') {
-                                    showSnackbar("This email already exists");
-                                  } else {
-                                    showSnackbar("The email is not valid");
-                                  }
-                                }
-                              }
+                              Student student = Student(
+                                email: emailController.text,
+                                password: passwordController.text,
+                                level: levelController.text,
+                                gender: gender,
+                                name: nameController.text,
+                                id: idController.text,
+                              );
+                              await box.put(idController.text, student);
+                              showSnackbar("Sign up Successful!");
+                              navigateToLogin();
                             } else {
                               showSnackbar("Please, enter all required fields");
                             }
@@ -301,7 +267,6 @@ class _SignupScreenState extends State<SignupScreen> {
   }
 }
 
-// this function used when user sign up offline , so when internet connection restored data stored in firebase
 Future<void> syncOfflineUsersToFirebase() async {
   for (var student in box.values) {
     try {
@@ -326,33 +291,5 @@ Future<void> syncOfflineUsersToFirebase() async {
     } catch (e) {
       print("Failed to sync ${student.email}: $e");
     }
-  }
-}
-
-Future<void> syncOnlineUsersToHive() async {
-  try {
-    QuerySnapshot querySnapshot =
-        await FirebaseFirestore.instance.collection("students").get();
-
-    for (var doc in querySnapshot.docs) {
-      Map<String, dynamic> data = doc.data() as Map<String, dynamic>;
-
-      Student student = Student(
-        id: data['id'],
-        name: data['name'],
-        email: data['email'],
-        gender: data['gender'],
-        level: data['level'],
-      );
-
-      if (!box.containsKey(student.id)) {
-        await box.put(student.id, student);
-        print("Synced ${student.email} to Hive");
-      }
-    }
-
-    print("Successfully synced all online users to Hive");
-  } catch (e) {
-    print("Failed to sync online users to Hive: $e");
   }
 }
