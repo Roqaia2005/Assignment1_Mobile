@@ -24,7 +24,7 @@ class _HomeScreenState extends State<HomeScreen> {
 
   String? selectedGender = "Male";
 
-  String? selectedLevel = "Level 1";
+  String? selectedLevel;
 
   Future<Student?> getStudentData() async {
     if (studentEmail == null) return null;
@@ -142,7 +142,9 @@ class _HomeScreenState extends State<HomeScreen> {
         leading: IconButton(
           icon: const Icon(Icons.arrow_back, color: Colors.white),
           onPressed: () {
-            Navigator.of(context).pop();
+            Navigator.of(context).pushReplacement(
+              MaterialPageRoute(builder: (context) => const LoginScreen()),
+            );
           },
         ),
         title: const Text("Profile",
@@ -198,8 +200,12 @@ class _HomeScreenState extends State<HomeScreen> {
                     const SizedBox(height: 12),
                     buildGenderSelector(),
                     const SizedBox(height: 12),
-                    buildEditableField("Email", emailController),
-                    buildEditableField("Student ID", studentIdController),
+                    buildEditableField("Email", emailController,
+                        readOnly: true),
+                    buildEditableField("Student ID", studentIdController,
+                        readOnly: true),
+                    const SizedBox(height: 12),
+                    buildLevelDropdown(),
                     const SizedBox(height: 12),
                     buildEditableField("Password", passwordController,
                         obscureText: true),
@@ -251,12 +257,13 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildEditableField(String label, TextEditingController controller,
-      {bool obscureText = false}) {
+      {bool obscureText = false, bool readOnly = false}) {
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: TextFormField(
         controller: controller,
         obscureText: obscureText,
+        readOnly: readOnly,
         style: const TextStyle(fontSize: 16, fontWeight: FontWeight.w500),
         decoration: InputDecoration(
           labelText: label,
@@ -292,7 +299,10 @@ class _HomeScreenState extends State<HomeScreen> {
           children: [
             Expanded(
               child: RadioListTile<String>(
-                title: const Text("Male"),
+                title: const Text(
+                  "Male",
+                  style: TextStyle(fontWeight: FontWeight.bold),
+                ),
                 value: "Male",
                 groupValue: selectedGender,
                 activeColor: Colors.pinkAccent,
@@ -305,7 +315,10 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: RadioListTile<String>(
-                title: const Text("Female"),
+                title: const Text("Female",
+                    style: TextStyle(
+                      fontWeight: FontWeight.bold,
+                    )),
                 value: "Female",
                 groupValue: selectedGender,
                 activeColor: Colors.pinkAccent,
@@ -322,39 +335,41 @@ class _HomeScreenState extends State<HomeScreen> {
     );
   }
 
-  // Widget buildLevelDropdown() {
-  //   List<String> levels = ["Level 1", "Level 2", "Level 3", "Level 4"];
-  //   return Padding(
-  //     padding: const EdgeInsets.symmetric(vertical: 8),
-  //     child: DropdownButtonFormField<String>(
-  //       value: selectedLevel,
-  //       items: levels.map((level) {
-  //         return DropdownMenuItem<String>(
-  //           value: level,
-  //           child: Text(level, style: const TextStyle(fontSize: 16)),
-  //         );
-  //       }).toList(),
-  //       onChanged: (value) {
-  //         setState(() {
-  //           selectedLevel = value!;
-  //         });
-  //       },
-  //       decoration: InputDecoration(
-  //         labelText: "Level",
-  //         labelStyle: const TextStyle(
-  //             color: Colors.pinkAccent, fontWeight: FontWeight.bold),
-  //         filled: true,
-  //         fillColor: Colors.white.withOpacity(0.8),
-  //         border: OutlineInputBorder(
-  //           borderRadius: BorderRadius.circular(10),
-  //           borderSide: BorderSide.none,
-  //         ),
-  //         enabledBorder: OutlineInputBorder(
-  //           borderRadius: BorderRadius.circular(10),
-  //           borderSide: BorderSide(color: Colors.grey.shade300),
-  //         ),
-  //       ),
-  //     ),
-  //   );
-  // }
+  Widget buildLevelDropdown() {
+    List<String> levels = ["Level 1", "Level 2", "Level 3", "Level 4"];
+
+    return Padding(
+      padding: const EdgeInsets.symmetric(vertical: 8),
+      child: DropdownButtonFormField<String>(
+        value: levels.contains(selectedLevel) ? selectedLevel : null,
+        items: levels.map((level) {
+          return DropdownMenuItem<String>(
+            value: level,
+            child: Text(level, style: const TextStyle(fontSize: 16)),
+          );
+        }).toList(),
+        onChanged: (value) {
+          print("Selected Level: $value"); // Debugging
+          setState(() {
+            selectedLevel = value!;
+          });
+        },
+        decoration: InputDecoration(
+          labelText: "Level",
+          labelStyle: const TextStyle(
+              color: Colors.pinkAccent, fontWeight: FontWeight.bold),
+          filled: true,
+          fillColor: Colors.white.withOpacity(0.8),
+          border: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide.none,
+          ),
+          enabledBorder: OutlineInputBorder(
+            borderRadius: BorderRadius.circular(10),
+            borderSide: BorderSide(color: Colors.grey.shade300),
+          ),
+        ),
+      ),
+    );
+  }
 }
