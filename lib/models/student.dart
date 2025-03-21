@@ -15,15 +15,17 @@ class Student extends HiveObject {
   String? gender;
   @HiveField(5)
   String? level;
+  @HiveField(6)
+  String? image;
 
-  Student({
-    this.name,
-    this.id,
-    this.email,
-    this.password,
-    this.gender,
-    this.level,
-  });
+  Student(
+      {this.name,
+      this.id,
+      this.email,
+      this.password,
+      this.gender,
+      this.level,
+      this.image});
 
   Student.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -32,9 +34,10 @@ class Student extends HiveObject {
     password = json['password'];
     gender = json['gender'];
     level = json['level'];
+    image = json['image'];
   }
   @override
   String toString() {
-    return 'Student{name: $name, email: $email, id: $id, password: $password, gender: $gender, level: $level}';
+    return 'Student{name: $name, email: $email, id: $id, password: $password, gender: $gender, level: $level, image: $image}';
   }
 }

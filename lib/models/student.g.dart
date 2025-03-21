@@ -23,13 +23,14 @@ class StudentAdapter extends TypeAdapter<Student> {
       password: fields[3] as String?,
       gender: fields[4] as String?,
       level: fields[5] as String?,
+      image: fields[6] as String?,
     );
   }
 
   @override
   void write(BinaryWriter writer, Student obj) {
     writer
-      ..writeByte(6)
+      ..writeByte(7)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -41,9 +42,10 @@ class StudentAdapter extends TypeAdapter<Student> {
       ..writeByte(4)
       ..write(obj.gender)
       ..writeByte(5)
-      ..write(obj.level);
+      ..write(obj.level)
+      ..writeByte(6)
+      ..write(obj.image);
   }
-
   @override
   int get hashCode => typeId.hashCode;
 

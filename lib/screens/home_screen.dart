@@ -25,6 +25,7 @@ class _HomeScreenState extends State<HomeScreen> {
   String? selectedGender = "Male";
 
   String? selectedLevel = "Level 1";
+
   Future<Student?> getStudentData() async {
     if (studentEmail == null) return null;
     print("Student email is: $studentEmail");
@@ -54,8 +55,11 @@ class _HomeScreenState extends State<HomeScreen> {
         emailController.text = studentData?.email ?? "";
         studentIdController.text = studentData?.id ?? "";
         passwordController.text = studentData?.password ?? "";
-        selectedGender = studentData?.gender ?? "Male"; // Default gender
-        selectedLevel = studentData?.level ?? "Level 1"; // Default level
+        selectedGender = studentData?.gender ?? "Male";
+        selectedLevel = studentData?.level ?? "Level 1";
+        if (studentData?.image != null) {
+          _image = File(studentData!.image!);
+        }
       });
     }
   }
@@ -71,6 +75,10 @@ class _HomeScreenState extends State<HomeScreen> {
     if (pickedFile != null) {
       setState(() {
         _image = File(pickedFile.path);
+        if (studentData != null) {
+          studentData!.image = _image!.path;
+          box.put(studentData!.id, studentData!);
+        }
       });
     }
   }
@@ -115,6 +123,7 @@ class _HomeScreenState extends State<HomeScreen> {
       password: passwordController.text,
       gender: selectedGender,
       level: selectedLevel,
+      image: _image?.path,
     );
 
     await box.put(studentIdController.text, updatedStudent);
@@ -155,7 +164,8 @@ class _HomeScreenState extends State<HomeScreen> {
                     backgroundColor: Colors.white,
                     backgroundImage: _image != null
                         ? FileImage(_image!)
-                        : const AssetImage("assets/images/person.jpg"),
+                        : const AssetImage("assets/images/person.jpg")
+                            as ImageProvider,
                   ),
                   InkWell(
                     onTap: _showImagePickerModal,
@@ -191,7 +201,6 @@ class _HomeScreenState extends State<HomeScreen> {
                     buildEditableField("Email", emailController),
                     buildEditableField("Student ID", studentIdController),
                     const SizedBox(height: 12),
-                    // buildLevelDropdown(),
                     buildEditableField("Password", passwordController,
                         obscureText: true),
                   ],
