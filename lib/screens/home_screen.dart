@@ -22,7 +22,7 @@ class _HomeScreenState extends State<HomeScreen> {
   final passwordController = TextEditingController();
   Student? studentData;
 
-  String? selectedGender = "Male";
+  String? selectedGender;
 
   String? selectedLevel;
 
@@ -48,6 +48,8 @@ class _HomeScreenState extends State<HomeScreen> {
     Student? student = await getStudentData();
 
     if (student != null) {
+      // Debugging
+      print("Retrieved Gender: ${student.gender}");
       setState(() {
         studentData = student;
 
@@ -55,8 +57,8 @@ class _HomeScreenState extends State<HomeScreen> {
         emailController.text = studentData?.email ?? "";
         studentIdController.text = studentData?.id ?? "";
         passwordController.text = studentData?.password ?? "";
-        selectedGender = studentData?.gender ?? "Male";
-        selectedLevel = studentData?.level ?? "Level 1";
+        selectedGender = studentData?.gender;
+        selectedLevel = studentData?.level;
         if (studentData?.image != null) {
           _image = File(studentData!.image!);
         }
@@ -122,7 +124,7 @@ class _HomeScreenState extends State<HomeScreen> {
       id: studentIdController.text,
       password: passwordController.text,
       gender: selectedGender,
-      level: selectedLevel,
+      level: selectedLevel ?? "1",
       image: _image?.path,
     );
 
@@ -336,12 +338,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildLevelDropdown() {
-    List<String> levels = ["Level 1", "Level 2", "Level 3", "Level 4"];
+    List<String> levels = ["1", "2", "3", "4"];
 
     return Padding(
       padding: const EdgeInsets.symmetric(vertical: 8),
       child: DropdownButtonFormField<String>(
-        value: levels.contains(selectedLevel) ? selectedLevel : null,
+        value: selectedLevel ?? "1", // Default to "1" if null
         items: levels.map((level) {
           return DropdownMenuItem<String>(
             value: level,
@@ -349,9 +351,8 @@ class _HomeScreenState extends State<HomeScreen> {
           );
         }).toList(),
         onChanged: (value) {
-          print("Selected Level: $value"); // Debugging
           setState(() {
-            selectedLevel = value!;
+            selectedLevel = value;
           });
         },
         decoration: InputDecoration(

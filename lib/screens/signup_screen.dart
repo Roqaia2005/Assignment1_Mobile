@@ -92,7 +92,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           Expanded(
                             child: RadioListTile<String>(
                               title: const Text('Male'),
-                              value: 'male',
+                              value: 'Male',
                               groupValue: gender,
                               onChanged: (value) {
                                 setState(() {
@@ -104,7 +104,7 @@ class _SignupScreenState extends State<SignupScreen> {
                           Expanded(
                             child: RadioListTile<String>(
                               title: const Text('Female'),
-                              value: 'female',
+                              value: 'Female',
                               groupValue: gender,
                               onChanged: (value) {
                                 setState(() {
@@ -134,6 +134,11 @@ class _SignupScreenState extends State<SignupScreen> {
                         child: ElevatedButton(
                           onPressed: () async {
                             if (_formKey.currentState!.validate()) {
+                              var existingStudent = box.get(idController.text);
+                              if (existingStudent != null) {
+                                showSnackbar("Email already exists!");
+                                return;
+                              }
                               Student student = Student(
                                 email: emailController.text,
                                 password: passwordController.text,
@@ -270,24 +275,33 @@ class _SignupScreenState extends State<SignupScreen> {
 Future<void> syncOfflineUsersToFirebase() async {
   for (var student in box.values) {
     try {
-      UserCredential userCredential =
-          await FirebaseAuth.instance.createUserWithEmailAndPassword(
-        email: student.email!,
-        password: student.password!,
-      );
-
-      await FirebaseFirestore.instance
+      var userDoc = await FirebaseFirestore.instance
           .collection("students")
           .doc(student.id)
-          .set({
-        'id': student.id,
-        'name': student.name,
-        'email': student.email,
-        'gender': student.gender,
-        'level': student.level,
-      });
+          .get();
 
-      print("Synced ${student.email} to Firebase");
+      if (!userDoc.exists) {
+        UserCredential userCredential =
+            await FirebaseAuth.instance.createUserWithEmailAndPassword(
+          email: student.email!,
+          password: student.password!,
+        );
+
+        await FirebaseFirestore.instance
+            .collection("students")
+            .doc(student.id)
+            .set({
+          'id': student.id,
+          'name': student.name,
+          'email': student.email,
+          'gender': student.gender,
+          'level': student.level,
+        });
+
+        print("Synced ${student.email} to Firebase");
+      } else {
+        print("${student.email} already exists in Firebase");
+      }
     } catch (e) {
       print("Failed to sync ${student.email}: $e");
     }
