@@ -23,7 +23,6 @@ class _HomeScreenState extends State<HomeScreen> {
   Student? studentData;
 
   String? selectedGender;
-
   String? selectedLevel;
 
   Future<Student?> getStudentData() async {
@@ -48,7 +47,6 @@ class _HomeScreenState extends State<HomeScreen> {
     Student? student = await getStudentData();
 
     if (student != null) {
-      // Debugging
       print("Retrieved Gender: ${student.gender}");
       setState(() {
         studentData = student;
@@ -154,106 +152,120 @@ class _HomeScreenState extends State<HomeScreen> {
         centerTitle: true,
       ),
       extendBodyBehindAppBar: true,
-      body: Container(
-        color: Colors.pinkAccent.shade100.withOpacity(0.2),
-        child: SingleChildScrollView(
-          padding: const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
-          child: Column(
-            children: [
-              Stack(
-                alignment: Alignment.bottomRight,
+      body: Stack(
+        children: [
+          // Wallpaper Background
+          SizedBox.expand(
+            child: Image.asset(
+              'assets/images/3.jpg',
+              fit: BoxFit.cover,
+            ),
+          ),
+          // Main content with opacity
+          Container(
+            color: Colors.pinkAccent.shade100.withOpacity(0.2),
+            child: SingleChildScrollView(
+              padding:
+                  const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
+              child: Column(
                 children: [
-                  CircleAvatar(
-                    radius: 70,
-                    backgroundColor: Colors.white,
-                    backgroundImage: _image != null
-                        ? FileImage(_image!)
-                        : const AssetImage("assets/images/person.jpg")
-                            as ImageProvider,
+                  Stack(
+                    alignment: Alignment.bottomRight,
+                    children: [
+                      CircleAvatar(
+                        radius: 70,
+                        backgroundColor: Colors.white,
+                        backgroundImage: _image != null
+                            ? FileImage(_image!)
+                            : const AssetImage("assets/images/person.jpg")
+                                as ImageProvider,
+                      ),
+                      InkWell(
+                        onTap: _showImagePickerModal,
+                        child: const CircleAvatar(
+                          radius: 24,
+                          backgroundColor: Colors.pinkAccent,
+                          child:
+                              Icon(Icons.edit, color: Colors.white, size: 20),
+                        ),
+                      ),
+                    ],
                   ),
-                  InkWell(
-                    onTap: _showImagePickerModal,
-                    child: const CircleAvatar(
-                      radius: 24,
-                      backgroundColor: Colors.pinkAccent,
-                      child: Icon(Icons.edit, color: Colors.white, size: 20),
+                  const SizedBox(height: 30),
+                  Container(
+                    padding: const EdgeInsets.all(20),
+                    decoration: BoxDecoration(
+                      color: Colors.white.withOpacity(0.9),
+                      borderRadius: BorderRadius.circular(15),
+                      boxShadow: [
+                        BoxShadow(
+                          color: Colors.black.withOpacity(0.1),
+                          blurRadius: 6,
+                          spreadRadius: 2,
+                          offset: const Offset(0, 3),
+                        ),
+                      ],
                     ),
+                    child: Column(
+                      children: [
+                        buildEditableField("Name", nameController),
+                        const SizedBox(height: 12),
+                        buildGenderSelector(),
+                        const SizedBox(height: 12),
+                        buildEditableField("Email", emailController,
+                            readOnly: true),
+                        buildEditableField("Student ID", studentIdController,
+                            readOnly: true),
+                        const SizedBox(height: 12),
+                        buildLevelDropdown(),
+                        const SizedBox(height: 12),
+                        buildEditableField("Password", passwordController,
+                            obscureText: true),
+                      ],
+                    ),
+                  ),
+                  const SizedBox(height: 25),
+                  ElevatedButton(
+                    onPressed: updateProfile,
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pinkAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 14, horizontal: 50),
+                      elevation: 3,
+                    ),
+                    child: const Text(
+                      "Edit Profile",
+                      style: TextStyle(
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold,
+                          color: Colors.white),
+                    ),
+                  ),
+                  const SizedBox(height: 20),
+                  TextButton.icon(
+                    icon: const Icon(Icons.logout, color: Colors.red, size: 22),
+                    label: const Text(
+                      "Log out",
+                      style: TextStyle(
+                          color: Colors.red,
+                          fontSize: 18,
+                          fontWeight: FontWeight.bold),
+                    ),
+                    onPressed: () {
+                      Navigator.of(context).pushReplacement(
+                        MaterialPageRoute(
+                            builder: (context) => const LoginScreen()),
+                      );
+                    },
                   ),
                 ],
               ),
-              const SizedBox(height: 30),
-              Container(
-                padding: const EdgeInsets.all(20),
-                decoration: BoxDecoration(
-                  color: Colors.white.withOpacity(0.9),
-                  borderRadius: BorderRadius.circular(15),
-                  boxShadow: [
-                    BoxShadow(
-                      color: Colors.black.withOpacity(0.1),
-                      blurRadius: 6,
-                      spreadRadius: 2,
-                      offset: const Offset(0, 3),
-                    ),
-                  ],
-                ),
-                child: Column(
-                  children: [
-                    buildEditableField("Name", nameController),
-                    const SizedBox(height: 12),
-                    buildGenderSelector(),
-                    const SizedBox(height: 12),
-                    buildEditableField("Email", emailController,
-                        readOnly: true),
-                    buildEditableField("Student ID", studentIdController,
-                        readOnly: true),
-                    const SizedBox(height: 12),
-                    buildLevelDropdown(),
-                    const SizedBox(height: 12),
-                    buildEditableField("Password", passwordController,
-                        obscureText: true),
-                  ],
-                ),
-              ),
-              const SizedBox(height: 25),
-              ElevatedButton(
-                onPressed: updateProfile,
-                style: ElevatedButton.styleFrom(
-                  backgroundColor: Colors.pinkAccent,
-                  shape: RoundedRectangleBorder(
-                    borderRadius: BorderRadius.circular(12),
-                  ),
-                  padding:
-                      const EdgeInsets.symmetric(vertical: 14, horizontal: 50),
-                  elevation: 3,
-                ),
-                child: const Text(
-                  "Edit Profile",
-                  style: TextStyle(
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold,
-                      color: Colors.white),
-                ),
-              ),
-              const SizedBox(height: 20),
-              TextButton.icon(
-                icon: const Icon(Icons.logout, color: Colors.red, size: 22),
-                label: const Text(
-                  "Log out",
-                  style: TextStyle(
-                      color: Colors.red,
-                      fontSize: 18,
-                      fontWeight: FontWeight.bold),
-                ),
-                onPressed: () {
-                  Navigator.of(context).pushReplacement(
-                    MaterialPageRoute(
-                        builder: (context) => const LoginScreen()),
-                  );
-                },
-              ),
-            ],
+            ),
           ),
-        ),
+        ],
       ),
     );
   }
@@ -339,38 +351,34 @@ class _HomeScreenState extends State<HomeScreen> {
 
   Widget buildLevelDropdown() {
     List<String> levels = ["1", "2", "3", "4"];
-
-    return Padding(
-      padding: const EdgeInsets.symmetric(vertical: 8),
-      child: DropdownButtonFormField<String>(
-        value: selectedLevel ?? "1", // Default to "1" if null
-        items: levels.map((level) {
-          return DropdownMenuItem<String>(
-            value: level,
-            child: Text(level, style: const TextStyle(fontSize: 16)),
-          );
-        }).toList(),
-        onChanged: (value) {
-          setState(() {
-            selectedLevel = value;
-          });
-        },
-        decoration: InputDecoration(
-          labelText: "Level",
-          labelStyle: const TextStyle(
-              color: Colors.pinkAccent, fontWeight: FontWeight.bold),
-          filled: true,
-          fillColor: Colors.white.withOpacity(0.8),
-          border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide.none,
-          ),
-          enabledBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(10),
-            borderSide: BorderSide(color: Colors.grey.shade300),
-          ),
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        const Text(
+          "Level",
+          style: TextStyle(
+              fontSize: 16,
+              color: Colors.pinkAccent,
+              fontWeight: FontWeight.bold),
         ),
-      ),
+        DropdownButtonFormField<String>(
+          value: selectedLevel,
+          decoration: InputDecoration(
+            filled: true,
+            fillColor: Colors.white.withOpacity(0.8),
+            border: OutlineInputBorder(borderRadius: BorderRadius.circular(10)),
+          ),
+          items: levels
+              .map((level) => DropdownMenuItem<String>(
+                  value: level, child: Text("Level $level")))
+              .toList(),
+          onChanged: (value) {
+            setState(() {
+              selectedLevel = value;
+            });
+          },
+        ),
+      ],
     );
   }
 }
