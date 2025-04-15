@@ -4,6 +4,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/student.dart';
+import 'package:student_registeration/screens/all_stores.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -225,6 +226,7 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 25),
+                  
                   ElevatedButton(
                     onPressed: updateProfile,
                     style: ElevatedButton.styleFrom(
@@ -244,6 +246,27 @@ class _HomeScreenState extends State<HomeScreen> {
                           color: Colors.white),
                     ),
                   ),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(builder: (context) => const AllStoresScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pinkAccent.shade100,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(vertical: 14, horizontal: 50),
+                      elevation: 3,
+                    ),
+                    child: const Text(
+                      "View All Stores",
+                      style: TextStyle(
+                          fontSize: 18, fontWeight: FontWeight.bold, color: Colors.white),
+                    ),
+                  ),
                   const SizedBox(height: 20),
                   TextButton.icon(
                     icon: const Icon(Icons.logout, color: Colors.red, size: 22),
@@ -261,6 +284,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
+
                 ],
               ),
             ),

@@ -1,0 +1,4 @@
+[
+    { "name": "Store A", "address": "123 Main St", "latitude": 40.0, "longitude": -74.0 },
+    { "name": "Store B", "address": "456 Elm St", "latitude": 41.0, "longitude": -75.0 }
+]
