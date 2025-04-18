@@ -2,20 +2,26 @@ import 'firebase_options.dart';
 import 'package:flutter/material.dart';
 import 'package:hive_flutter/adapters.dart';
 import 'package:firebase_core/firebase_core.dart';
-import 'package:student_registeration/helper.dart';
+import 'package:student_registeration/models/store.dart';
 import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
+
+
+
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
-  Hive.registerAdapter(StudentAdapter());
+  if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(StudentAdapter());
+  if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(StoreAdapter());
 
   await Hive.openBox<Student>('students');
+  await Hive.openBox<Store>('stores');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
-  print("hive valuesssssssssssssssssssssssss${box.values.toList()}");
+
+
 
   runApp(const MyApp());
 }

@@ -1,9 +1,11 @@
 import 'dart:io';
+import 'dart:ui';
 import 'login_screen.dart';
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/student.dart';
+import 'package:student_registeration/screens/all_stores.dart';
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -154,44 +156,61 @@ class _HomeScreenState extends State<HomeScreen> {
       extendBodyBehindAppBar: true,
       body: Stack(
         children: [
-          // Wallpaper Background
           SizedBox.expand(
-            child: Image.asset(
-              'assets/images/3.jpg',
-              fit: BoxFit.cover,
+          child: Stack(
+            fit: StackFit.expand,
+              children: [
+                Image.asset(
+                  "assets/images/home.jpg",
+                  fit: BoxFit.cover,
+                ),
+                BackdropFilter(
+                  filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
+                  child: Container(
+                    color: Colors.white.withOpacity(0.2), 
+                  ),
+                ),
+              ],
             ),
           ),
-          // Main content with opacity
           Container(
-            color: Colors.pinkAccent.shade100.withOpacity(0.2),
+            // color: Colors.white.withOpacity(0.2),
             child: SingleChildScrollView(
               padding:
                   const EdgeInsets.symmetric(horizontal: 20, vertical: 100),
               child: Column(
                 children: [
-                  Stack(
-                    alignment: Alignment.bottomRight,
-                    children: [
-                      CircleAvatar(
-                        radius: 70,
-                        backgroundColor: Colors.white,
-                        backgroundImage: _image != null
-                            ? FileImage(_image!)
-                            : const AssetImage("assets/images/person.jpg")
-                                as ImageProvider,
-                      ),
-                      InkWell(
-                        onTap: _showImagePickerModal,
-                        child: const CircleAvatar(
-                          radius: 24,
-                          backgroundColor: Colors.pinkAccent,
-                          child:
-                              Icon(Icons.edit, color: Colors.white, size: 20),
-                        ),
-                      ),
-                    ],
-                  ),
-                  const SizedBox(height: 30),
+                  // Row(
+              //   crossAxisAlignment: CrossAxisAlignment.center,
+              //   children: [
+              //     Expanded(
+              //       child: buildEditableField("Name", nameController),
+              //     ),
+              //     const SizedBox(width: 16),
+              //     Stack(
+              //       alignment: Alignment.bottomRight,
+              //       children: [
+              //         CircleAvatar(
+              //           radius: 40,
+              //           backgroundColor: Colors.white,
+              //           backgroundImage: _image != null
+              //               ? FileImage(_image!)
+              //               : const AssetImage("assets/images/person.jpg") as ImageProvider,
+              //         ),
+              //         InkWell(
+              //           onTap: _showImagePickerModal,
+              //           child: const CircleAvatar(
+              //             radius: 16,
+              //             backgroundColor: Colors.pinkAccent,
+              //             child: Icon(Icons.edit, color: Colors.white, size: 16),
+              //           ),
+              //         ),
+              //       ],
+              //     ),
+              //   ],
+              // ),
+              // const SizedBox(height: 20),
+
                   Container(
                     padding: const EdgeInsets.all(20),
                     decoration: BoxDecoration(
@@ -208,7 +227,35 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                     child: Column(
                       children: [
-                        buildEditableField("Name", nameController),
+                        Row(
+                          crossAxisAlignment: CrossAxisAlignment.center,
+                          children: [
+                            Expanded(
+                              child: buildEditableField("Name", nameController),
+                            ),
+                            const SizedBox(width: 16),
+                            Stack(
+                              alignment: Alignment.bottomRight,
+                              children: [
+                                CircleAvatar(
+                                  radius: 40,
+                                  backgroundColor: Colors.white,
+                                  backgroundImage: _image != null
+                                      ? FileImage(_image!)
+                                      : const AssetImage("assets/images/person.jpg") as ImageProvider,
+                                ),
+                                InkWell(
+                                  onTap: _showImagePickerModal,
+                                  child: const CircleAvatar(
+                                    radius: 14,
+                                    backgroundColor: Colors.pinkAccent,
+                                    child: Icon(Icons.edit, color: Colors.white, size: 14),
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ],
+                        ),
                         const SizedBox(height: 12),
                         buildGenderSelector(),
                         const SizedBox(height: 12),
@@ -225,24 +272,78 @@ class _HomeScreenState extends State<HomeScreen> {
                     ),
                   ),
                   const SizedBox(height: 25),
-                  ElevatedButton(
-                    onPressed: updateProfile,
-                    style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
-                      shape: RoundedRectangleBorder(
-                        borderRadius: BorderRadius.circular(12),
+                  Center(
+                    child: ElevatedButton(
+                      onPressed: updateProfile,
+                      style: ElevatedButton.styleFrom(
+                        backgroundColor: Colors.pinkAccent,
+                        shape: RoundedRectangleBorder(
+                          borderRadius: BorderRadius.circular(12),
+                        ),
+                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                        elevation: 3,
                       ),
-                      padding: const EdgeInsets.symmetric(
-                          vertical: 14, horizontal: 50),
-                      elevation: 3,
-                    ),
-                    child: const Text(
-                      "Edit Profile",
-                      style: TextStyle(
+                      child: const Text(
+                        "Edit Profile",
+                        style: TextStyle(
                           fontSize: 18,
                           fontWeight: FontWeight.bold,
-                          color: Colors.white),
+                          color: Colors.white,
+                        ),
+                      ),
                     ),
+                  ),
+                  const SizedBox(height: 20),
+                  Row(
+                    mainAxisAlignment: MainAxisAlignment.center,
+                    children: [
+                      ElevatedButton(
+                        onPressed: () {
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(builder: (context) => const AllStoresScreen()),
+                          );
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pinkAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          elevation: 3,
+                        ),
+                        child: const Text(
+                          "View All Stores",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                      const SizedBox(width: 15),
+                      ElevatedButton(
+                        onPressed: () {
+                          // favourite stores screen
+                        },
+                        style: ElevatedButton.styleFrom(
+                          backgroundColor: Colors.pinkAccent,
+                          shape: RoundedRectangleBorder(
+                            borderRadius: BorderRadius.circular(12),
+                          ),
+                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          elevation: 3,
+                        ),
+                        child: const Text(
+                          "View Favourite Stores",
+                          style: TextStyle(
+                            fontSize: 16,
+                            fontWeight: FontWeight.bold,
+                            color: Colors.white,
+                          ),
+                        ),
+                      ),
+                    ],
                   ),
                   const SizedBox(height: 20),
                   TextButton.icon(
@@ -261,6 +362,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
+
                 ],
               ),
             ),
