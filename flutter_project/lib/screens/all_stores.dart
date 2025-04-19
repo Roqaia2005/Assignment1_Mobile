@@ -45,7 +45,7 @@ class _AllStoresScreenState extends State<AllStoresScreen> {
 
         for (var item in data) {
           final store = Store.fromJson(item);
-          await storesBox.add(store as Student);
+          await storesBox.add(store);
         }
 
         setState(() {

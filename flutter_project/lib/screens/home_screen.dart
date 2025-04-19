@@ -305,6 +305,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
+
                           backgroundColor: Colors.pinkAccent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
