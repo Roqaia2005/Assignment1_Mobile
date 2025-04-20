@@ -1,7 +1,7 @@
 import 'package:hive/hive.dart';
 part 'student.g.dart';
 
-@HiveType(typeId: 1)
+@HiveType(typeId: 0)
 class Student extends HiveObject {
   @HiveField(0)
   String? name;
@@ -17,6 +17,8 @@ class Student extends HiveObject {
   String? level;
   @HiveField(6)
   String? image;
+  @HiveField(7)
+  List<int>? favStores;
 
   Student(
       {this.name,
@@ -25,7 +27,8 @@ class Student extends HiveObject {
       this.password,
       this.gender,
       this.level,
-      this.image});
+      this.image,
+      this.favStores});
 
   Student.fromJson(Map<String, dynamic> json) {
     name = json['name'];
@@ -35,9 +38,10 @@ class Student extends HiveObject {
     gender = json['gender'];
     level = json['level'];
     image = json['image'];
+    favStores = List<int>.from(json['favStores'] ?? []);
   }
   @override
   String toString() {
-    return 'Student{name: $name, email: $email, id: $id, password: $password, gender: $gender, level: $level, image: $image}';
+    return 'Student{name: $name, email: $email, id: $id, password: $password, gender: $gender, level: $level, image: $image, favStores: $favStores}';
   }
 }

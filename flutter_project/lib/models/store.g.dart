@@ -17,24 +17,27 @@ class StoreAdapter extends TypeAdapter<Store> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Store(
-      name: fields[0] as String,
-      address: fields[1] as String,
-      latitude: fields[2] as double,
-      longitude: fields[3] as double,
+      id: fields[0] as int,
+      name: fields[1] as String,
+      address: fields[2] as String,
+      latitude: fields[3] as double,
+      longitude: fields[4] as double,
     );
   }
 
   @override
   void write(BinaryWriter writer, Store obj) {
     writer
-      ..writeByte(4)
+      ..writeByte(5)
       ..writeByte(0)
-      ..write(obj.name)
+      ..write(obj.id)
       ..writeByte(1)
-      ..write(obj.address)
+      ..write(obj.name)
       ..writeByte(2)
-      ..write(obj.latitude)
+      ..write(obj.address)
       ..writeByte(3)
+      ..write(obj.latitude)
+      ..writeByte(4)
       ..write(obj.longitude);
   }
 

@@ -1,9 +1,10 @@
 import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:http/http.dart' as http;
+import 'package:provider/provider.dart';
 import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/store.dart';
-import 'package:student_registeration/models/student.dart';
+import 'package:student_registeration/provider/fav_provider.dart';
 
 class AllStoresScreen extends StatefulWidget {
   const AllStoresScreen({super.key});
@@ -83,6 +84,28 @@ class _AllStoresScreenState extends State<AllStoresScreen> {
                     borderRadius: BorderRadius.circular(12),
                   ),
                   child: ListTile(
+                    leading: IconButton(
+                      icon: Icon(Icons.favorite),
+                      onPressed: () {
+                        Provider.of<FavProvider>(context, listen: false)
+                            .toggleFavorite(store.id);
+
+                        final currentStudent = box.values.first;
+                        if (currentStudent.favStores == null) {
+                          currentStudent.favStores = [];
+                        }
+                        if (currentStudent.favStores!.contains(store.id)) {
+                          currentStudent.favStores!.remove(store.id);
+                        } else {
+                          currentStudent.favStores!.add(store.id);
+                        }
+                        currentStudent.save();
+                      },
+                      color:
+                          Provider.of<FavProvider>(context).isFavorite(store.id)
+                              ? Colors.red
+                              : Colors.grey,
+                    ),
                     title: Text(store.name,
                         style: const TextStyle(fontWeight: FontWeight.bold)),
                     subtitle: Text(store.address),

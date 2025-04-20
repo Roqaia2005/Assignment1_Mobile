@@ -5,7 +5,9 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/student.dart';
+import 'package:student_registeration/screens/fav_stores.dart';
 import 'package:student_registeration/screens/all_stores.dart';
+
 
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
@@ -157,8 +159,8 @@ class _HomeScreenState extends State<HomeScreen> {
       body: Stack(
         children: [
           SizedBox.expand(
-          child: Stack(
-            fit: StackFit.expand,
+            child: Stack(
+              fit: StackFit.expand,
               children: [
                 Image.asset(
                   "assets/images/home.jpg",
@@ -167,7 +169,7 @@ class _HomeScreenState extends State<HomeScreen> {
                 BackdropFilter(
                   filter: ImageFilter.blur(sigmaX: 3, sigmaY: 3),
                   child: Container(
-                    color: Colors.white.withOpacity(0.2), 
+                    color: Colors.white.withOpacity(0.2),
                   ),
                 ),
               ],
@@ -181,35 +183,35 @@ class _HomeScreenState extends State<HomeScreen> {
               child: Column(
                 children: [
                   // Row(
-              //   crossAxisAlignment: CrossAxisAlignment.center,
-              //   children: [
-              //     Expanded(
-              //       child: buildEditableField("Name", nameController),
-              //     ),
-              //     const SizedBox(width: 16),
-              //     Stack(
-              //       alignment: Alignment.bottomRight,
-              //       children: [
-              //         CircleAvatar(
-              //           radius: 40,
-              //           backgroundColor: Colors.white,
-              //           backgroundImage: _image != null
-              //               ? FileImage(_image!)
-              //               : const AssetImage("assets/images/person.jpg") as ImageProvider,
-              //         ),
-              //         InkWell(
-              //           onTap: _showImagePickerModal,
-              //           child: const CircleAvatar(
-              //             radius: 16,
-              //             backgroundColor: Colors.pinkAccent,
-              //             child: Icon(Icons.edit, color: Colors.white, size: 16),
-              //           ),
-              //         ),
-              //       ],
-              //     ),
-              //   ],
-              // ),
-              // const SizedBox(height: 20),
+                  //   crossAxisAlignment: CrossAxisAlignment.center,
+                  //   children: [
+                  //     Expanded(
+                  //       child: buildEditableField("Name", nameController),
+                  //     ),
+                  //     const SizedBox(width: 16),
+                  //     Stack(
+                  //       alignment: Alignment.bottomRight,
+                  //       children: [
+                  //         CircleAvatar(
+                  //           radius: 40,
+                  //           backgroundColor: Colors.white,
+                  //           backgroundImage: _image != null
+                  //               ? FileImage(_image!)
+                  //               : const AssetImage("assets/images/person.jpg") as ImageProvider,
+                  //         ),
+                  //         InkWell(
+                  //           onTap: _showImagePickerModal,
+                  //           child: const CircleAvatar(
+                  //             radius: 16,
+                  //             backgroundColor: Colors.pinkAccent,
+                  //             child: Icon(Icons.edit, color: Colors.white, size: 16),
+                  //           ),
+                  //         ),
+                  //       ],
+                  //     ),
+                  //   ],
+                  // ),
+                  // const SizedBox(height: 20),
 
                   Container(
                     padding: const EdgeInsets.all(20),
@@ -242,14 +244,17 @@ class _HomeScreenState extends State<HomeScreen> {
                                   backgroundColor: Colors.white,
                                   backgroundImage: _image != null
                                       ? FileImage(_image!)
-                                      : const AssetImage("assets/images/person.jpg") as ImageProvider,
+                                      : const AssetImage(
+                                              "assets/images/person.jpg")
+                                          as ImageProvider,
                                 ),
                                 InkWell(
                                   onTap: _showImagePickerModal,
                                   child: const CircleAvatar(
                                     radius: 14,
                                     backgroundColor: Colors.pinkAccent,
-                                    child: Icon(Icons.edit, color: Colors.white, size: 14),
+                                    child: Icon(Icons.edit,
+                                        color: Colors.white, size: 14),
                                   ),
                                 ),
                               ],
@@ -280,7 +285,8 @@ class _HomeScreenState extends State<HomeScreen> {
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
-                        padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 30),
+                        padding: const EdgeInsets.symmetric(
+                            vertical: 10, horizontal: 30),
                         elevation: 3,
                       ),
                       child: const Text(
@@ -301,16 +307,17 @@ class _HomeScreenState extends State<HomeScreen> {
                         onPressed: () {
                           Navigator.push(
                             context,
-                            MaterialPageRoute(builder: (context) => const AllStoresScreen()),
+                            MaterialPageRoute(
+                                builder: (context) => const AllStoresScreen()),
                           );
                         },
                         style: ElevatedButton.styleFrom(
-
                           backgroundColor: Colors.pinkAccent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
                           elevation: 3,
                         ),
                         child: const Text(
@@ -325,14 +332,19 @@ class _HomeScreenState extends State<HomeScreen> {
                       const SizedBox(width: 15),
                       ElevatedButton(
                         onPressed: () {
-                          // favourite stores screen
+                          Navigator.push(
+                            context,
+                            MaterialPageRoute(
+                                builder: (context) => const FavStores()),
+                          );
                         },
                         style: ElevatedButton.styleFrom(
                           backgroundColor: Colors.pinkAccent,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
-                          padding: const EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+                          padding: const EdgeInsets.symmetric(
+                              vertical: 10, horizontal: 20),
                           elevation: 3,
                         ),
                         child: const Text(
@@ -363,7 +375,6 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                   ),
-
                 ],
               ),
             ),
