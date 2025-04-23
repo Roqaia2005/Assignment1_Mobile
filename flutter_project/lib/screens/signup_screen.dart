@@ -20,7 +20,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  final levelController = TextEditingController();
+  TextEditingController ?levelController;
 
   String? gender;
   final _formKey = GlobalKey<FormState>();
@@ -119,7 +119,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       buildTextField("Email", emailController, false,
                           validator: validateEmail),
                       const SizedBox(height: 10),
-                      buildTextField("Level (Optional)", levelController, false,
+                      buildTextField("Level (Optional)", levelController ?? TextEditingController(), false,
                           validator: validateLevel),
                       const SizedBox(height: 10),
                       buildTextField("Password", passwordController, true,
@@ -142,7 +142,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               Student student = Student(
                                 email: emailController.text,
                                 password: passwordController.text,
-                                level: levelController.text,
+                                level: levelController?.text ?? "",
                                 gender: gender,
                                 name: nameController.text,
                                 id: idController.text,
@@ -178,7 +178,6 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
-
   Widget buildTextField(
     String hint,
     TextEditingController controller,

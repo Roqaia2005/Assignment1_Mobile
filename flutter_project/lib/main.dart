@@ -8,16 +8,17 @@ import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/login_screen.dart';
 import 'package:student_registeration/provider/fav_provider.dart';
 
-
-
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
   await Hive.initFlutter();
 
   if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(StudentAdapter());
   if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(StoreAdapter());
+await Hive.deleteBoxFromDisk('students');
+await Hive.openBox<Student>('students');
 
-  await Hive.openBox<Student>('students');
+
+
   await Hive.openBox<Store>('stores');
 
   await Firebase.initializeApp(options: DefaultFirebaseOptions.currentPlatform);
@@ -28,7 +29,6 @@ void main() async {
       child: const MyApp(),
     ),
   );
-  
 }
 
 class MyApp extends StatelessWidget {

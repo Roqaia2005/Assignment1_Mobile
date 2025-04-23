@@ -8,7 +8,6 @@ import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/screens/fav_stores.dart';
 import 'package:student_registeration/screens/all_stores.dart';
 
-
 class HomeScreen extends StatefulWidget {
   const HomeScreen({super.key});
 
@@ -464,12 +463,12 @@ class _HomeScreenState extends State<HomeScreen> {
   }
 
   Widget buildLevelDropdown() {
-    List<String> levels = ["1", "2", "3", "4"];
+    List<String> levels = ["1", "2", "3", "4", ""];
     return Column(
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "Level",
+          "None",
           style: TextStyle(
               fontSize: 16,
               color: Colors.pinkAccent,

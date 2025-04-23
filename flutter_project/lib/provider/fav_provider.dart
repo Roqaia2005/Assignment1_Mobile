@@ -1,11 +1,11 @@
 import 'package:flutter/material.dart';
 
 class FavProvider extends ChangeNotifier {
-  final List<int> _favIds = [];
+  final List<String> _favIds = [];
 
-  List<int> get favIds => _favIds;
+  List<String> get favIds => _favIds;
 
-  void toggleFavorite(int storeId) {
+  void toggleFavorite(String storeId) {
     final isExist = _favIds.contains(storeId);
     if (isExist) {
       _favIds.remove(storeId);
@@ -15,7 +15,7 @@ class FavProvider extends ChangeNotifier {
     notifyListeners();
   }
 
-  bool isFavorite(int storeId) {
+  bool isFavorite(String storeId) {
     return _favIds.contains(storeId);
   }
 }

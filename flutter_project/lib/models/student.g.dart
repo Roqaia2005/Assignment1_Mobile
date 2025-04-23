@@ -24,13 +24,14 @@ class StudentAdapter extends TypeAdapter<Student> {
       gender: fields[4] as String?,
       level: fields[5] as String?,
       image: fields[6] as String?,
+      favStores: (fields[7] as List?)?.cast<String>(),
     );
   }
 
   @override
   void write(BinaryWriter writer, Student obj) {
     writer
-      ..writeByte(7)
+      ..writeByte(8)
       ..writeByte(0)
       ..write(obj.name)
       ..writeByte(1)
@@ -44,7 +45,9 @@ class StudentAdapter extends TypeAdapter<Student> {
       ..writeByte(5)
       ..write(obj.level)
       ..writeByte(6)
-      ..write(obj.image);
+      ..write(obj.image)
+      ..writeByte(7)
+      ..write(obj.favStores);
   }
 
   @override

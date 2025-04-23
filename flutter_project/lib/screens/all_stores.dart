@@ -4,6 +4,7 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/store.dart';
+import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/provider/fav_provider.dart';
 
 class AllStoresScreen extends StatefulWidget {
@@ -90,10 +91,8 @@ class _AllStoresScreenState extends State<AllStoresScreen> {
                         Provider.of<FavProvider>(context, listen: false)
                             .toggleFavorite(store.id);
 
-                        final currentStudent = box.values.first;
-                        if (currentStudent.favStores == null) {
-                          currentStudent.favStores = [];
-                        }
+                        final Student currentStudent = box.values.first;
+                        currentStudent.favStores ??= [];
                         if (currentStudent.favStores!.contains(store.id)) {
                           currentStudent.favStores!.remove(store.id);
                         } else {

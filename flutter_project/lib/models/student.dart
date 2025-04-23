@@ -18,7 +18,7 @@ class Student extends HiveObject {
   @HiveField(6)
   String? image;
   @HiveField(7)
-  List<int>? favStores;
+  List<String>? favStores;
 
   Student(
       {this.name,
@@ -38,7 +38,7 @@ class Student extends HiveObject {
     gender = json['gender'];
     level = json['level'];
     image = json['image'];
-    favStores = List<int>.from(json['favStores'] ?? []);
+    favStores = List<String>.from(json['favStores'] ?? []);
   }
   @override
   String toString() {

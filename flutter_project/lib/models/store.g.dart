@@ -17,7 +17,7 @@ class StoreAdapter extends TypeAdapter<Store> {
       for (int i = 0; i < numOfFields; i++) reader.readByte(): reader.read(),
     };
     return Store(
-      id: fields[0] as int,
+      id: fields[0] as String,
       name: fields[1] as String,
       address: fields[2] as String,
       latitude: fields[3] as double,
