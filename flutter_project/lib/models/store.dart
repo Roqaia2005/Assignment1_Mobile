@@ -24,7 +24,7 @@ class Store extends HiveObject {
 
   factory Store.fromJson(Map<String, dynamic> json) {
     return Store(
-      id: json['id'].toString(),
+      id: json['id'],
       name: json['name'],
       address: json['address'],
       latitude: (json['latitude'] as num).toDouble(),
