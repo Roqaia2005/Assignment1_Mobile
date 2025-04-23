@@ -40,7 +40,7 @@ class _AllStoresScreenState extends State<AllStoresScreen> {
   Future<void> fetchAndStoreStoresFromApi() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.1.5:8080/api/stores'));
+          await http.get(Uri.parse('http://localhost:8080/api/stores'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
