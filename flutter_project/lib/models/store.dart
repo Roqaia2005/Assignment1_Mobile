@@ -5,7 +5,7 @@ part 'store.g.dart';
 @HiveType(typeId: 1)
 class Store extends HiveObject {
   @HiveField(0)
-  String id;
+  int id;
   @HiveField(1)
   String name;
   @HiveField(2)

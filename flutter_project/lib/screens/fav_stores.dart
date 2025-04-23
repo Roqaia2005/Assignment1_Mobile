@@ -7,7 +7,9 @@ class FavStores extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final currentStudent = box.values.first;
+    final currentStudent =
+        box.values.firstWhere((s) => s.email == studentEmail);
+
     final favStoreIds = currentStudent.favStores ?? [];
     final favStores = storesBox.values
         .cast<Store>()

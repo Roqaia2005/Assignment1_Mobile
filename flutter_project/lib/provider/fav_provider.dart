@@ -1,21 +1,30 @@
-import 'package:flutter/material.dart';
+import 'package:flutter/foundation.dart';
+import 'package:student_registeration/helper.dart';
+import 'package:student_registeration/models/student.dart';
 
 class FavProvider extends ChangeNotifier {
-  final List<String> _favIds = [];
+  List<int> _favIds = [];
 
-  List<String> get favIds => _favIds;
+  void load(Student student) {
+    _favIds = List<int>.from(student.favStores ?? []);
+    notifyListeners();
+  }
 
-  void toggleFavorite(String storeId) {
-    final isExist = _favIds.contains(storeId);
-    if (isExist) {
+  List<int> get favIds => _favIds;
+
+  void toggleFavorite(int storeId) {
+    if (_favIds.contains(storeId)) {
       _favIds.remove(storeId);
     } else {
       _favIds.add(storeId);
     }
+
+    final currentStudent = box.values.firstWhere((s) => s.email == studentEmail);
+    currentStudent.favStores = _favIds;
+    currentStudent.save();
+
     notifyListeners();
   }
 
-  bool isFavorite(String storeId) {
-    return _favIds.contains(storeId);
-  }
+  bool isFavorite(int storeId) => _favIds.contains(storeId);
 }

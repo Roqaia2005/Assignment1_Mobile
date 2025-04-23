@@ -14,10 +14,8 @@ void main() async {
 
   if (!Hive.isAdapterRegistered(0)) Hive.registerAdapter(StudentAdapter());
   if (!Hive.isAdapterRegistered(1)) Hive.registerAdapter(StoreAdapter());
-await Hive.deleteBoxFromDisk('students');
-await Hive.openBox<Student>('students');
-
-
+  await Hive.deleteBoxFromDisk('students');
+  await Hive.openBox<Student>('students');
 
   await Hive.openBox<Store>('stores');
 

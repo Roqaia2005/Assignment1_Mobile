@@ -4,8 +4,8 @@ import 'package:http/http.dart' as http;
 import 'package:provider/provider.dart';
 import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/store.dart';
-import 'package:student_registeration/models/student.dart';
 import 'package:student_registeration/provider/fav_provider.dart';
+
 
 class AllStoresScreen extends StatefulWidget {
   const AllStoresScreen({super.key});
@@ -21,6 +21,9 @@ class _AllStoresScreenState extends State<AllStoresScreen> {
   @override
   void initState() {
     super.initState();
+    final currentStudent =
+        box.values.firstWhere((s) => s.email == studentEmail);
+    Provider.of<FavProvider>(context, listen: false).load(currentStudent);
     storeInHive();
   }
 
@@ -40,7 +43,7 @@ class _AllStoresScreenState extends State<AllStoresScreen> {
   Future<void> fetchAndStoreStoresFromApi() async {
     try {
       final response =
-          await http.get(Uri.parse('http://192.168.1.5:8080/api/stores'));
+          await http.get(Uri.parse('http://localhost:8080/api/stores'));
 
       if (response.statusCode == 200) {
         final List<dynamic> data = json.decode(response.body);
@@ -90,15 +93,6 @@ class _AllStoresScreenState extends State<AllStoresScreen> {
                       onPressed: () {
                         Provider.of<FavProvider>(context, listen: false)
                             .toggleFavorite(store.id);
-
-                        final Student currentStudent = box.values.first;
-                        currentStudent.favStores ??= [];
-                        if (currentStudent.favStores!.contains(store.id)) {
-                          currentStudent.favStores!.remove(store.id);
-                        } else {
-                          currentStudent.favStores!.add(store.id);
-                        }
-                        currentStudent.save();
                       },
                       color:
                           Provider.of<FavProvider>(context).isFavorite(store.id)

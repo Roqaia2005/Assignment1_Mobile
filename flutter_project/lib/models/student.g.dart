@@ -24,7 +24,7 @@ class StudentAdapter extends TypeAdapter<Student> {
       gender: fields[4] as String?,
       level: fields[5] as String?,
       image: fields[6] as String?,
-      favStores: (fields[7] as List?)?.cast<String>(),
+      favStores: (fields[7] as List?)?.cast<int>(),
     );
   }
 
