@@ -468,7 +468,7 @@ class _HomeScreenState extends State<HomeScreen> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         const Text(
-          "None",
+          "Level",
           style: TextStyle(
               fontSize: 16,
               color: Colors.pinkAccent,
