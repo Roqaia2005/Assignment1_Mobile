@@ -5,6 +5,7 @@ import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart';
 import 'package:student_registeration/helper.dart';
 import 'package:student_registeration/models/student.dart';
+import 'package:student_registeration/screens/distance.dart';
 import 'package:student_registeration/screens/fav_stores.dart';
 import 'package:student_registeration/screens/all_stores.dart';
 
@@ -356,6 +357,33 @@ class _HomeScreenState extends State<HomeScreen> {
                         ),
                       ),
                     ],
+                  ),
+                  const SizedBox(height: 35),
+                  ElevatedButton(
+                    onPressed: () {
+                      Navigator.push(
+                        context,
+                        MaterialPageRoute(
+                            builder: (context) => const DistanceScreen()),
+                      );
+                    },
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Colors.pinkAccent,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(12),
+                      ),
+                      padding: const EdgeInsets.symmetric(
+                          vertical: 10, horizontal: 20),
+                      elevation: 3,
+                    ),
+                    child: const Text(
+                      "Distance from favorite stores",
+                      style: TextStyle(
+                        fontSize: 16,
+                        fontWeight: FontWeight.bold,
+                        color: Colors.white,
+                      ),
+                    ),
                   ),
                   const SizedBox(height: 20),
                   TextButton.icon(
