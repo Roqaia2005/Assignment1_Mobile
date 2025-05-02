@@ -1,10 +1,10 @@
 import 'dart:async';
+import '../helper.dart';
+import 'login_screen.dart';
+import '../models/student.dart';
 import 'package:flutter/material.dart';
 import 'package:firebase_auth/firebase_auth.dart';
-import 'package:student_registeration/helper.dart';
 import 'package:cloud_firestore/cloud_firestore.dart';
-import 'package:student_registeration/models/student.dart';
-import 'package:student_registeration/screens/login_screen.dart';
 import 'package:internet_connection_checker_plus/internet_connection_checker_plus.dart';
 
 class SignupScreen extends StatefulWidget {
@@ -20,7 +20,7 @@ class _SignupScreenState extends State<SignupScreen> {
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
-  TextEditingController ?levelController;
+  final levelController = TextEditingController();
 
   String? gender;
   final _formKey = GlobalKey<FormState>();
@@ -82,16 +82,22 @@ class _SignupScreenState extends State<SignupScreen> {
                         ),
                       ),
                       const SizedBox(height: 20),
-                      buildTextField("ID", idController, false),
+                      buildTextField("ID", idController, false,validator:validateID),
                       const SizedBox(height: 10),
-                      buildTextField("Name", nameController, false),
+                      buildTextField("Name", nameController, false,validator:validateName),
                       const SizedBox(height: 10),
                       Row(
                         mainAxisAlignment: MainAxisAlignment.center,
                         children: [
                           Expanded(
                             child: RadioListTile<String>(
-                              title: const Text('Male'),
+                              title: const Text(
+                                'Male',
+                                style: TextStyle(
+                                  
+                                  fontSize: 15,
+                                  ),
+                              ),
                               value: 'Male',
                               groupValue: gender,
                               onChanged: (value) {
@@ -103,7 +109,13 @@ class _SignupScreenState extends State<SignupScreen> {
                           ),
                           Expanded(
                             child: RadioListTile<String>(
-                              title: const Text('Female'),
+                              title: const Text(
+                                "Female",
+                                style: TextStyle(
+                                  
+                                  fontSize: 13.5,
+                                  ),
+                              ),
                               value: 'Female',
                               groupValue: gender,
                               onChanged: (value) {
@@ -119,7 +131,7 @@ class _SignupScreenState extends State<SignupScreen> {
                       buildTextField("Email", emailController, false,
                           validator: validateEmail),
                       const SizedBox(height: 10),
-                      buildTextField("Level (Optional)", levelController ?? TextEditingController(), false,
+                      buildTextField("Level (Optional)", levelController, false,
                           validator: validateLevel),
                       const SizedBox(height: 10),
                       buildTextField("Password", passwordController, true,
@@ -142,7 +154,7 @@ class _SignupScreenState extends State<SignupScreen> {
                               Student student = Student(
                                 email: emailController.text,
                                 password: passwordController.text,
-                                level: levelController?.text ?? "",
+                                level: levelController.text,
                                 gender: gender,
                                 name: nameController.text,
                                 id: idController.text,
@@ -178,6 +190,7 @@ class _SignupScreenState extends State<SignupScreen> {
       ),
     );
   }
+
   Widget buildTextField(
     String hint,
     TextEditingController controller,
@@ -218,6 +231,19 @@ class _SignupScreenState extends State<SignupScreen> {
     );
   }
 
+  String? validateName(String? value) {
+    if (value?.isEmpty ?? true) {
+      return "This field is required";
+    }
+    return null;
+  }
+  String? validateID(String? value) {
+    if (value?.isEmpty ?? true) {
+      return "This field is required";
+    }
+    
+    return null;
+  }
   String? validateEmail(String? value) {
     if (value?.isEmpty ?? true) {
       return "This field is required";

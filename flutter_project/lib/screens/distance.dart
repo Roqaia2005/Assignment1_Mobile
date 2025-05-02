@@ -165,14 +165,14 @@ class _DistanceScreenState extends State<DistanceScreen> {
                                   mainAxisAlignment: MainAxisAlignment.center,
                                   children: [
                                     Icon(Icons.directions_walk,
-                                        size: 30, color: primaryColor),
+                                        size: 30, color: Colors.white),
                                     const SizedBox(width: 16),
                                     Text(
                                       "Distance: ${(_distanceInMeters! / 1000).toStringAsFixed(2)} km",
                                       style: TextStyle(
                                         fontSize: 20,
                                         fontWeight: FontWeight.bold,
-                                        color: primaryColor,
+                                        color: Colors.white,
                                       ),
                                     ),
                                   ],

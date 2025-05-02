@@ -261,9 +261,9 @@ class _HomeScreenState extends State<HomeScreen> {
                             ),
                           ],
                         ),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
                         buildGenderSelector(),
-                        const SizedBox(height: 12),
+                        const SizedBox(height: 10),
                         buildEditableField("Email", emailController,
                             readOnly: true),
                         buildEditableField("Student ID", studentIdController,
@@ -276,12 +276,12 @@ class _HomeScreenState extends State<HomeScreen> {
                       ],
                     ),
                   ),
-                  const SizedBox(height: 25),
+                  const SizedBox(height: 20),
                   Center(
                     child: ElevatedButton(
                       onPressed: updateProfile,
                       style: ElevatedButton.styleFrom(
-                        backgroundColor: Colors.pinkAccent,
+                        backgroundColor: Colors.pinkAccent.shade100,
                         shape: RoundedRectangleBorder(
                           borderRadius: BorderRadius.circular(12),
                         ),
@@ -292,7 +292,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       child: const Text(
                         "Edit Profile",
                         style: TextStyle(
-                          fontSize: 18,
+                          fontSize: 16,
                           fontWeight: FontWeight.bold,
                           color: Colors.white,
                         ),
@@ -312,7 +312,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pinkAccent,
+                          backgroundColor: Colors.pinkAccent.shade100,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -321,7 +321,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           elevation: 3,
                         ),
                         child: const Text(
-                          "View All Stores",
+                          "All Stores",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -339,7 +339,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: Colors.pinkAccent,
+                          backgroundColor: Colors.pinkAccent.shade100,
                           shape: RoundedRectangleBorder(
                             borderRadius: BorderRadius.circular(12),
                           ),
@@ -348,7 +348,7 @@ class _HomeScreenState extends State<HomeScreen> {
                           elevation: 3,
                         ),
                         child: const Text(
-                          "View Favourite Stores",
+                          "Favourite Stores",
                           style: TextStyle(
                             fontSize: 16,
                             fontWeight: FontWeight.bold,
@@ -368,7 +368,7 @@ class _HomeScreenState extends State<HomeScreen> {
                       );
                     },
                     style: ElevatedButton.styleFrom(
-                      backgroundColor: Colors.pinkAccent,
+                      backgroundColor: Colors.pinkAccent.shade100,
                       shape: RoundedRectangleBorder(
                         borderRadius: BorderRadius.circular(12),
                       ),
@@ -446,7 +446,7 @@ class _HomeScreenState extends State<HomeScreen> {
         const Text(
           "Gender",
           style: TextStyle(
-              fontSize: 16,
+              fontSize: 14,
               color: Colors.pinkAccent,
               fontWeight: FontWeight.bold),
         ),
@@ -456,7 +456,10 @@ class _HomeScreenState extends State<HomeScreen> {
               child: RadioListTile<String>(
                 title: const Text(
                   "Male",
-                  style: TextStyle(fontWeight: FontWeight.bold),
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 14,
+                    ),
                 ),
                 value: "Male",
                 groupValue: selectedGender,
@@ -470,10 +473,13 @@ class _HomeScreenState extends State<HomeScreen> {
             ),
             Expanded(
               child: RadioListTile<String>(
-                title: const Text("Female",
-                    style: TextStyle(
-                      fontWeight: FontWeight.bold,
-                    )),
+                title: const Text(
+                  "Female",
+                  style: TextStyle(
+                    fontWeight: FontWeight.bold,
+                    fontSize: 13.5,
+                    ),
+                ),
                 value: "Female",
                 groupValue: selectedGender,
                 activeColor: Colors.pinkAccent,
